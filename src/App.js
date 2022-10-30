@@ -8,6 +8,16 @@ import Login from './components/Login/Login';
 import Signup from './components/Signup/Signup';
 import Profile from './components/Profile';
 import Logout from './components/Logout';
+import CreateTournament from './components/Tournament/CreateTournament';
+import Tournament from './components/Tournament/Tournament';
+import AddTeam from './components/Tournament/AddTeam';
+import ScheduleMatch from './components/Tournament/ScheduleMatch';
+
+import Team from './components/Team/Team';
+import AddPlayer from './components/Team/AddPlayer';
+import Player from './components/Team/Player';
+
+import Match from './components/Match/Match';
 
 import { auth } from "./firebase";
 import style from "./components/Style.css"
@@ -35,6 +45,17 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/profile" element={<Profile name={userName} />} />
+
+          <Route path="/createtournament" element={<CreateTournament />} />
+          <Route path="/tournament" element={<Tournament />} />
+          <Route path="/addteam" element={<AddTeam />} />
+          <Route path="/scheduleMatch" element={<ScheduleMatch />} />
+
+          <Route path="/team" element={<Team />} />
+          <Route path="/addplayer" element={<AddPlayer />} />
+          <Route path="/player" element={<Player />} />
+          <Route path="/match" element={<Match />} />
+
           <Route path="*" element={<NoPage />} />
         </Routes>
 
