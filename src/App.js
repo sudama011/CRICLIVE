@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
-import NoPage from "./pages/NoPage";
 import Home from './components/Home';
 import Login from './components/Login/Login';
 import Signup from './components/Signup/Signup';
@@ -17,10 +16,11 @@ import Team from './components/Team/Team';
 import AddPlayer from './components/Team/AddPlayer';
 import Player from './components/Team/Player';
 
-import Match from './components/Match/Match';
+import { ThemeProvider } from '@material-ui/core'
+import { theme } from './components/ui/Theme'
+import Container from './main/Container'
 
 import { auth } from "./firebase";
-import style from "./components/Style.css"
 
 function App() {
   const [userName, setUserName] = useState("");
@@ -40,7 +40,8 @@ function App() {
         <Navbar />
 
         <Routes>
-          <Route path="/" element={<Home />} />
+
+          <Route path="/*" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
@@ -54,9 +55,11 @@ function App() {
           <Route path="/team" element={<Team />} />
           <Route path="/addplayer" element={<AddPlayer />} />
           <Route path="/player" element={<Player />} />
-          <Route path="/match" element={<Match />} />
+          <Route path="/match/*" element={<ThemeProvider theme={theme}>
+            <Container />
+          </ThemeProvider>} />
 
-          <Route path="*" element={<NoPage />} />
+         
         </Routes>
 
         <Footer />
