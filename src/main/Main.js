@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import NotFound from '../components/NotFound'
 import ScoreBoard from '../components/ScoreBoard'
 import StepperContainer from '../components/StepperContainer'

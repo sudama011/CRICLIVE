@@ -41,14 +41,14 @@ function Login() {
           <h1 className={styles.heading}>Login</h1>
 
           <InputControl
-            label="Email"
+            label="Email" type="email"
             onChange={(event) =>
               setValues((prev) => ({ ...prev, email: event.target.value }))
             }
             placeholder="Enter email address"
           />
           <InputControl
-            label="Password"
+            label="Password" type="password"
             onChange={(event) =>
               setValues((prev) => ({ ...prev, pass: event.target.value }))
             }

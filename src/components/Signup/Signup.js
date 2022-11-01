@@ -47,21 +47,21 @@ function Signup() {
         <h1 className={styles.heading}>Signup</h1>
 
         <InputControl
-          label="Name"
+          label="Name" type="text"
           placeholder="Enter your name"
           onChange={(event) =>
             setValues((prev) => ({ ...prev, name: event.target.value }))
           }
         />
         <InputControl
-          label="Email"
+          label="Email" type="email"
           placeholder="Enter email address"
           onChange={(event) =>
             setValues((prev) => ({ ...prev, email: event.target.value }))
           }
         />
         <InputControl
-          label="Password"
+          label="Password" type="password"
           placeholder="Enter password"
           onChange={(event) =>
             setValues((prev) => ({ ...prev, pass: event.target.value }))

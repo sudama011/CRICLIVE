@@ -6,7 +6,7 @@ import Home from './components/Home';
 import Login from './components/Login/Login';
 import Signup from './components/Signup/Signup';
 import Profile from './components/Profile';
-import Logout from './components/Logout';
+import Logout from './components/Login/Logout';
 import CreateTournament from './components/Tournament/CreateTournament';
 import Tournament from './components/Tournament/Tournament';
 import AddTeam from './components/Tournament/AddTeam';
@@ -23,13 +23,18 @@ import Container from './main/Container'
 import { auth } from "./firebase";
 
 function App() {
-  const [userName, setUserName] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        setUserName(user.displayName);
-      } else setUserName("");
+        setName(user.displayName);
+        setEmail(user.email);
+      } else {
+        setName("");
+        setEmail("");
+      }
     });
   }, []);
 
@@ -45,9 +50,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/profile" element={<Profile name={userName} />} />
+          <Route path="/profile" element={<Profile name={name} />} />
 
-          <Route path="/createtournament" element={<CreateTournament />} />
+          <Route path="/createtournament" element={<CreateTournament email={email} />} />
           <Route path="/tournament" element={<Tournament />} />
           <Route path="/addteam" element={<AddTeam />} />
           <Route path="/scheduleMatch" element={<ScheduleMatch />} />
@@ -59,7 +64,7 @@ function App() {
             <Container />
           </ThemeProvider>} />
 
-         
+
         </Routes>
 
         <Footer />
