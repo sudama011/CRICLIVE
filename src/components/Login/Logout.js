@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 

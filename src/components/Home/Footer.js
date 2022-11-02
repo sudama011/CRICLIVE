@@ -34,7 +34,7 @@ export default function Footer() {
                         <MDBCol md="2" lg="2" xl="2" className='mx-auto mb-4'>
                             <h6 className='text-uppercase fw-bold mb-4'>Follow Us On</h6>
                             <p>
-                                <a href='https://www.facebook.com/sudama.dhakad.31' title='Facebook' target="_blank" className='me-4 text-reset'>
+                                <a href='https://www.facebook.com/sudama.dhakad.31' title='Facebook' target="_blank" rel="noopener noreferrer" className='me-4 text-reset'>
                                     <MDBIcon fab icon='facebook-f' /> facebook
                                 </a>
                             </p>

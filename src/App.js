@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Footer from './components/Footer';
-import Navbar from './components/Navbar';
-import Home from './components/Home';
+import Footer from './components/Home/Footer';
+import Navbar from './components/Home/Navbar';
+import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Signup from './components/Signup/Signup';
 import Profile from './components/Profile';
@@ -50,7 +50,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
-          <Route path="/profile" element={<Profile name={name} />} />
+          <Route path="/profile" element={<Profile name={name} email={email} />} />
 
           <Route path="/createtournament" element={<CreateTournament email={email} />} />
           <Route path="/tournament" element={<Tournament />} />
