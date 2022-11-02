@@ -6,4 +6,11 @@ class MathUtil {
   }
 }
 
+function getDate (firestoreDate) {
+  return new Date(
+    firestoreDate.seconds * 1000
+    + firestoreDate.nanoseconds / 1000000,).toLocaleDateString();
+}
+
 export default MathUtil
+export {getDate}

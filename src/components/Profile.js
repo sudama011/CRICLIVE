@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { db } from '../firebase';
+import { collection, query, onSnapshot } from "firebase/firestore";
 
 export default function Profile(props) {
 
@@ -7,6 +9,27 @@ export default function Profile(props) {
       <h2>Login please</h2>
     )
   }
+  const [tournaments, setTournaments] = useState([{
+    name: "Loding...",
+    startDate: "Loding...",
+    endDate: "Loding...",
+    prize: "Loding...",
+    village: "Loding...",
+    city: "Loding...",
+    state: "Loding...",
+    organiser: "Loding...",
+  }]);
+
+  useEffect(() => {
+    const q = query(collection(db, 'tournaments'))
+    onSnapshot(q, (querySnapshot) => {
+      let arr = []
+      querySnapshot.forEach((t) => {
+        arr.push({ ...t.data() });
+      })
+      setTournaments(arr);
+    })
+  }, [])
 
   return (
     <div>
@@ -36,6 +59,20 @@ export default function Profile(props) {
               </thead>
 
               <tbody>
+
+                {
+                  tournaments.map((t, index) => (
+                    <tr key={index}>
+                      <td>{t.name}</td>
+                      <td>{t.startDate}</td>
+                      <td>{t.endDate}</td>
+                      <td>{t.prize}</td>
+                      <td>{t.village}</td>
+                      <td>{t.city}</td>
+                      <td>{t.state}</td>
+                    </tr>
+                  ))
+                }
 
               </tbody>
 

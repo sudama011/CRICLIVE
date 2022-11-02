@@ -1,83 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { collection, query, onSnapshot } from "firebase/firestore";
 
 function Home() {
-    
-
-    const [presentTournament, setPresentTournament] = useState(
-        <tr>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-        </tr>
-    );
-    const [futureTournament, setFutureTournament] = useState(
-        <tr>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-        </tr>
-    );
-    const [pastTournament, setPastTournament] = useState(
-        <tr>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-            <td>Loading...</td>
-        </tr>
-    );
 
 
-    // async function task() {
-    //     let url = 'http://localhost:9000/home';
-    //     try {
-    //         let res = await fetch(url);
-    //         let data = await res.json();
+    const [presentTournament, setPresentTournament] = useState([{
+        name: "Loding...",
+        startDate: "Loding...",
+        endDate: "Loding...",
+        prize: "Loding...",
+        village: "Loding...",
+        city: "Loding...",
+        state: "Loding...",
+        organiser: "Loding...",
+    }]);
 
-    //         setPresentTournament(getBody(data.present_tournament));
-    //         setFutureTournament(getBody(data.future_tournament));
-    //         setPastTournament(getBody(data.past_tournament));
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-    // useEffect(() => {
-    //     task();
-    // }, [])
+    const [futureTournament, setFutureTournament] = useState([{
+        name: "Loding...",
+        startDate: "Loding...",
+        endDate: "Loding...",
+        prize: "Loding...",
+        village: "Loding...",
+        city: "Loding...",
+        state: "Loding...",
+        organiser: "Loding...",
+    }]);
 
+    const [pastTournament, setPastTournament] = useState([{
+        name: "Loding...",
+        startDate: "Loding...",
+        endDate: "Loding...",
+        prize: "Loding...",
+        village: "Loding...",
+        city: "Loding...",
+        state: "Loding...",
+        organiser: "Loding...",
+    }]);
 
-    // function getBody(tournaments) {
-    //     const tournamentList = tournaments.map((t, index) =>
-    //         <tr key={index}>
-    //             <td><button onClick={fun}>{t.name}</button></td>
-    //             <td> {t.start_date}</td>
-    //             <td> {t.end_date}</td>
-    //             <td> {t.organiser.name} </td>
-    //             <td> {t.prize}</td>
-    //             <td> {t.village} </td>
-    //             <td> {t.city}</td>
-    //             <td> {t.state}</td>
-    //         </tr>
-    //     );
-    //     return tournamentList;
-    // }
+    useEffect(() => {
+        const q = query(collection(db, 'tournaments'))
+        onSnapshot(q, (querySnapshot) => {
+            let arr = []
+            querySnapshot.forEach((t) => {
+                arr.push({ ...t.data() });
+            })
+            setPresentTournament(arr);
+            setFutureTournament(arr);
+            setPastTournament(arr);
+        })
+    }, [])
 
-    // function fun(e) {
-    //     return;
-    // }
+    function getBody(tournaments) {
+        const tournamentList = tournaments.map((t, index) =>
+            <tr key={index}>
+                <td>{t.name}</td>
+                <td> {t.startDate}</td>
+                <td> {t.endDate}</td>
+                <td> {t.organiser} </td>
+                <td> {t.prize}</td>
+                <td> {t.village} </td>
+                <td> {t.city}</td>
+                <td> {t.state}</td>
+            </tr>
+        );
+        return tournamentList;
+    }
 
     return (
         <div>
@@ -101,7 +89,7 @@ function Home() {
                             </thead>
 
                             <tbody>
-                                {presentTournament}
+                                {getBody(presentTournament)}
                             </tbody>
 
                         </table>
@@ -126,7 +114,7 @@ function Home() {
                             </thead>
 
                             <tbody>
-                                {futureTournament}
+                                {getBody(futureTournament)}
                             </tbody>
 
                         </table>
@@ -150,7 +138,7 @@ function Home() {
                             </thead>
 
                             <tbody>
-                                {pastTournament}
+                                {getBody(pastTournament)}
                             </tbody>
 
                         </table>

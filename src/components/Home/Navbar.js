@@ -1,8 +1,23 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import logo from './logo-criclive.png'
+import { getAuth, signOut } from "firebase/auth";
 
 export default function Navbar(props) {
+    const navigate = useNavigate();
+    const auth = getAuth();
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        signOut(auth).then(() => {
+            alert("Logout Successfully");
+            navigate('/');
+        }).catch((err) => {
+            console.error(err);
+            alert(err.message);
+        });
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light ">
             <img src={logo} className="rounded" alt="criclive" style={{ height: "50px" }} />
@@ -23,7 +38,7 @@ export default function Navbar(props) {
                     </li>
 
                     <li className="nav-item" style={{ margin: "6px" }}>
-                        <Link className="nav-link active" to="/logout">Logout</Link>
+                        <button onClick={handleLogout}>Logout</button>
                     </li>
 
                     <li className="nav-item" style={{ margin: "6px" }}>

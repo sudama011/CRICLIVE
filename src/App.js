@@ -6,7 +6,6 @@ import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Signup from './components/Signup/Signup';
 import Profile from './components/Profile';
-import Logout from './components/Login/Logout';
 import CreateTournament from './components/Tournament/CreateTournament';
 import Tournament from './components/Tournament/Tournament';
 import AddTeam from './components/Tournament/AddTeam';
@@ -49,7 +48,6 @@ function App() {
           <Route path="/*" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
           <Route path="/profile" element={<Profile name={name} email={email} />} />
 
           <Route path="/createtournament" element={<CreateTournament email={email} />} />

@@ -1,12 +1,17 @@
-import React, { useState } from "react";
-import {useNavigate } from "react-router-dom";
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import InputControl from "../InputControl/InputControl";
-
 import styles from "./Tournament.module.css";
 
+import { db } from '../../firebase';
+import { doc, setDoc } from "firebase/firestore";
+
 function CreateTournament(props) {
+  let email = props.email.split('@')[0];
   const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState("");
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+
   const [values, setValues] = useState({
     name: "",
     startDate: "",
@@ -16,23 +21,25 @@ function CreateTournament(props) {
     city: "",
     state: "",
   });
-  
-  const postData = async (e) => {
-    const url = 'https://criclive-b357f-default-rtdb.firebaseio.com/' + props.email.split('@')[0] + '.json' 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(values)
-    });
-    return res;
-  };
-  
-  
-  const [errorMsg, setErrorMsg] = useState("");
-  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 
+
+
+  useEffect(() => {
+    setValues({ ...values, organiser: email });
+  }, []);
+
+  const postData = async () => {
+    try {
+      await setDoc(doc(db, 'tournaments', values.name), values);
+
+      alert("Tournament Created Successfully");
+      navigate("/profile");
+    } catch (err) {
+      setSubmitButtonDisabled(false);
+      setErrorMsg(err.message);
+      console.log(err)
+    }
+  };
 
   const handleSubmission = (e) => {
     e.preventDefault();
@@ -41,24 +48,13 @@ function CreateTournament(props) {
       setErrorMsg("Fill all fields");
       return;
     }
-
     setErrorMsg("");
-
     setSubmitButtonDisabled(true);
-    
-    postData()
-      .then(async (res) => {
-        alert("Tournament Created Successfully");
-        navigate("/profile");
-      })
-      .catch((err) => {
-        setSubmitButtonDisabled(false);
-        setErrorMsg(err.message);
-      });
+    postData();
   };
 
-
-
+  console.log(values)
+  
   return (
     <div className={styles.container} style={{ overflowX: "scroll" }}>
       <div className={styles.innerBox}>
