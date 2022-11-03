@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
-
+import { Link } from "react-router-dom";
 function Home() {
 
 
@@ -54,10 +54,14 @@ function Home() {
     function getBody(tournaments) {
         const tournamentList = tournaments.map((t, index) =>
             <tr key={index}>
-                <td>{t.name}</td>
+                <td>
+                    <Link to='/tournament'>
+                        <button type="button" class="btn btn-info">{t.name}</button>
+                    </Link>
+                </td>
                 <td> {t.startDate}</td>
                 <td> {t.endDate}</td>
-                <td> {t.organiser} </td>
+                <td> {t.organiser.name} </td>
                 <td> {t.prize}</td>
                 <td> {t.village} </td>
                 <td> {t.city}</td>

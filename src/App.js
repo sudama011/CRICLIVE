@@ -1,38 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Footer from './components/Home/Footer';
-import Navbar from './components/Home/Navbar';
-import Home from './components/Home/Home';
-import Login from './components/Login/Login';
-import Signup from './components/Signup/Signup';
-import Profile from './components/Profile';
-import CreateTournament from './components/Tournament/CreateTournament';
-import Tournament from './components/Tournament/Tournament';
-import AddTeam from './components/Tournament/AddTeam';
-import ScheduleMatch from './components/Tournament/ScheduleMatch';
-
-import Team from './components/Team/Team';
-import AddPlayer from './components/Team/AddPlayer';
-import Player from './components/Team/Player';
+import { auth } from "./firebase";
 
 import { ThemeProvider } from '@material-ui/core'
 import { theme } from './components/ui/Theme'
 import Container from './main/Container'
 
-import { auth } from "./firebase";
+import Footer from './components/Home/Footer';
+import Navbar from './components/Home/Navbar';
+import Home from './components/Home/Home';
+
+const Signup = lazy(() => import('./components/Signup/Signup'));
+const Login = lazy(() => import('./components/Login/Login'));
+const Profile = lazy(() => import('./components/Profile'));
+
+const CreateTournament = lazy(() => import('./components/Tournament/CreateTournament'));
+const Tournament = lazy(() => import('./components/Tournament/Tournament'));
+const AddTeam = lazy(() => import('./components/Tournament/AddTeam'));
+const ScheduleMatch = lazy(() => import('./components/Tournament/ScheduleMatch'));
+
+const Team = lazy(() => import('./components/Team/Team'));
+const AddPlayer = lazy(() => import('./components/Team/AddPlayer'));
+const Player = lazy(() => import('./components/Team/Player'));
+
 
 function App() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
 
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    uid: ""
+  })
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        setName(user.displayName);
-        setEmail(user.email);
+        setUser((prev) => ({ ...prev, name: user.displayName, email: user.email, uid: user.uid }));
       } else {
-        setName("");
-        setEmail("");
+        setUser({
+          name: "",
+          email: "",
+          uid: ""
+        })
       }
     });
   }, []);
@@ -41,26 +49,26 @@ function App() {
     <>
 
       <BrowserRouter>
-        <Navbar />
+        <Navbar user={user} />
 
         <Routes>
 
           <Route path="/*" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile name={name} email={email} />} />
+          <Route path="/signup" element={<Suspense><Signup /></Suspense>} />
+          <Route path="/login" element={<Suspense><Login /></Suspense>} />
+          <Route path="/profile" element={<Suspense><Profile user={user} /></Suspense>} />
 
-          <Route path="/createtournament" element={<CreateTournament email={email} />} />
-          <Route path="/tournament" element={<Tournament />} />
-          <Route path="/addteam" element={<AddTeam />} />
-          <Route path="/scheduleMatch" element={<ScheduleMatch />} />
+          <Route path="/createtournament" element={<Suspense><CreateTournament user={user} /></Suspense>} />
+          <Route path="/tournament" element={<Suspense><Tournament /></Suspense>} />
+          <Route path="/addteam" element={<Suspense><AddTeam /></Suspense>} />
+          <Route path="/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />
 
-          <Route path="/team" element={<Team />} />
-          <Route path="/addplayer" element={<AddPlayer />} />
-          <Route path="/player" element={<Player />} />
-          <Route path="/match/*" element={<ThemeProvider theme={theme}>
+          <Route path="/team" element={<Suspense><Team /></Suspense>} />
+          <Route path="/addplayer" element={<Suspense><AddPlayer /></Suspense>} />
+          <Route path="/player" element={<Suspense><Player /></Suspense>} />
+          <Route path="/match/*" element={<Suspense><ThemeProvider theme={theme}>
             <Container />
-          </ThemeProvider>} />
+          </ThemeProvider></Suspense>} />
 
 
         </Routes>

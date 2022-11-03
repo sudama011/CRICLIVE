@@ -1,50 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import InputControl from "../InputControl/InputControl";
 import styles from "./Tournament.module.css";
-
+import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
 import { doc, setDoc } from "firebase/firestore";
 
-function CreateTournament(props) {
-  let email = props.email.split('@')[0];
+function CreateTournament({ user }) {
+
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 
-  const [values, setValues] = useState({
-    name: "",
-    startDate: "",
-    endDate: "",
-    prize: "",
-    village: "",
-    city: "",
-    state: "",
-  });
-
-
-
-  useEffect(() => {
-    setValues({ ...values, organiser: email });
-  }, []);
+  const name = useRef("");
+  const startDate = useRef("");
+  const endDate = useRef("");
+  const prize = useRef("");
+  const village = useRef("");
+  const city = useRef("");
+  const state = useRef("");
 
   const postData = async () => {
     try {
+      const values = {
+        name: name.current.value,
+        startDate: startDate.current.value,
+        endDate: endDate.current.value,
+        prize: prize.current.value,
+        village: village.current.value,
+        city: city.current.value,
+        state: state.current.value,
+        organiser: user
+      }
       await setDoc(doc(db, 'tournaments', values.name), values);
 
       alert("Tournament Created Successfully");
       navigate("/profile");
     } catch (err) {
+      console.log(err)
       setSubmitButtonDisabled(false);
       setErrorMsg(err.message);
-      console.log(err)
     }
   };
 
   const handleSubmission = (e) => {
-    e.preventDefault();
-
-    if (!values.name || !values.startDate || !values.endDate || !values.prize || !values.city || !values.state) {
+    if (!name || !startDate || !endDate || !prize || !city || !state) {
       setErrorMsg("Fill all fields");
       return;
     }
@@ -53,75 +52,67 @@ function CreateTournament(props) {
     postData();
   };
 
-  console.log(values)
-  
   return (
     <div className={styles.container} style={{ overflowX: "scroll" }}>
       <div className={styles.innerBox}>
         <h2 className={styles.heading}>Create New Tournament</h2>
 
-        <InputControl
-          label="Name"
-          type="text"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, name: event.target.value }))
-          }
-          placeholder="Enter Tournament Name"
-        />
+        <div className={Style.container}>
+          <label>Name</label>
+          <input
+            label="name"
+            type="text"
+            ref={name}
+            placeholder="Enter Tournament Name" />
+        </div>
 
-        <InputControl
-          label="Start Date"
-          type="date"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, startDate: event.target.value }))
-          }
-          placeholder="Start Date"
-        />
+        <div className={Style.container}>
+          <label>Start Date</label>
+          <input
+            type="date"
+            ref={startDate}
+            placeholder="Start Date" />
+        </div>
 
-        <InputControl
-          label="End Date"
-          type="date"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, endDate: event.target.value }))
-          }
-          placeholder="End Date"
-        />
+        <div className={Style.container}>
+          <label>End Date</label>
+          <input
+            type="date"
+            ref={endDate}
+            placeholder="End Date" />
+        </div>
 
-        <InputControl
-          label="Prize"
-          type="number"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, prize: event.target.value }))
-          }
-          placeholder="Prize Money"
-        />
+        <div className={Style.container}>
+          <label>Name</label>
+          <input
+            type="number"
+            ref={prize}
+            placeholder="Prize Money" />
+        </div>
 
-        <InputControl
-          label="Village"
-          type="text"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, village: event.target.value }))
-          }
-          placeholder="Village"
-        />
+        <div className={Style.container}>
+          <label>Village</label>
+          <input
+            type="text"
+            ref={village}
+            placeholder="Village" />
+        </div>
 
-        <InputControl
-          label="City"
-          type="text"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, city: event.target.value }))
-          }
-          placeholder="City"
-        />
+        <div className={Style.container}>
+          <label>City</label>
+          <input
+            type="text"
+            ref={city}
+            placeholder="City" />
+        </div>
 
-        <InputControl
-          label="State"
-          type="text"
-          onChange={(event) =>
-            setValues((prev) => ({ ...prev, state: event.target.value }))
-          }
-          placeholder="State"
-        />
+        <div className={Style.container}>
+          <label>State</label>
+          <input
+            type="text"
+            ref={state}
+            placeholder="State" />
+        </div>
 
         <div className={styles.footer}>
           <b className={styles.error}>{errorMsg}</b>
@@ -129,6 +120,7 @@ function CreateTournament(props) {
             Submit
           </button>
         </div>
+
       </div>
     </div>
   );

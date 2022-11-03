@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { db } from '../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
+import { Link } from "react-router-dom";
 
-export default function Profile(props) {
+export default function Profile({user}) {
 
-  if (!props.name) {
+  if (!user.name) {
     return (
       <h2>Login please</h2>
     )
@@ -33,7 +34,7 @@ export default function Profile(props) {
 
   return (
     <div>
-      <h2>Welcome - {props.name}</h2>
+      <h2>Welcome - {user.name}</h2>
       <br />
       <form action="/createtournament" method="get">
         <button className="btn btn-secondary" type="submit">Create New Tournament</button>
@@ -63,7 +64,11 @@ export default function Profile(props) {
                 {
                   tournaments.map((t, index) => (
                     <tr key={index}>
-                      <td>{t.name}</td>
+                      <td>
+                        <Link to='/tournament'>
+                          <button type="button" class="btn btn-info">{t.name}</button>
+                        </Link>
+                      </td>
                       <td>{t.startDate}</td>
                       <td>{t.endDate}</td>
                       <td>{t.prize}</td>

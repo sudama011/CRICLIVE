@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from './logo-criclive.png'
 import { getAuth, signOut } from "firebase/auth";
 
-export default function Navbar(props) {
+export default function Navbar({ user }) {
+
     const navigate = useNavigate();
     const auth = getAuth();
 
@@ -33,13 +34,16 @@ export default function Navbar(props) {
                     <li className="nav-item active" style={{ margin: "6px" }}>
                         <Link className="nav-link active" to='/'>Home</Link>
                     </li>
-                     <li className="nav-item" style={{ margin: "6px" }}>
-                        <Link className="nav-link active" to="/login">Login</Link>
-                    </li>
 
-                    <li className="nav-item" style={{ margin: "6px" }}>
-                        <button onClick={handleLogout}>Logout</button>
-                    </li>
+                    {!user.name &&
+                        < li className="nav-item" style={{ margin: "6px" }}>
+                            <Link className="nav-link active" to="/login">Login</Link>
+                        </li>}
+
+
+                    {user.name && <li className="nav-item" style={{ margin: "6px" }} >
+                        <Link className="nav-link active" onClick={handleLogout} >Logout</Link>
+                    </li>}
 
                     <li className="nav-item" style={{ margin: "6px" }}>
                         <Link className="nav-link active" to="/profile">Profile</Link>
@@ -51,7 +55,7 @@ export default function Navbar(props) {
                     <button className="btn btn-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>
-        </nav>
+        </nav >
     )
 }
 
