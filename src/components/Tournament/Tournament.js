@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export default function Tournament() {
+
+  const tournament = useParams().tournament;
 
   const [teams, setTeams] = useState([{
     name: "Loding...",
@@ -42,24 +44,55 @@ export default function Tournament() {
   }]);
 
   useEffect(() => {
-    const q = query(collection(db, 'tournaments'))
+    const q = query(collection(db, `tournaments/${tournament}/teams`))
     onSnapshot(q, (querySnapshot) => {
       let arr = []
       querySnapshot.forEach((t) => {
         arr.push({ ...t.data() });
       })
+      setTeams(arr);
+    })
+  }, [])
+
+  useEffect(() => {
+    const q = query(collection(db, `tournaments/${tournament}/matches`))
+    onSnapshot(q, (querySnapshot) => {
+      let arr = []
+      querySnapshot.forEach((t) => {
+        arr.push({ ...t.data() });
+      })
+     
       setPresentMatch(arr);
       setFutureMatch(arr);
       setPastMatch(arr);
     })
   }, [])
 
-  function getBody(match) {
-    const MatchList = match.map((t, index) =>
+
+  function getPointTable(teams) {
+    return teams.map((t, index) => (
       <tr key={index}>
         <td>
-          <Link to='/tournament'>
-            <button type="button" class="btn btn-info">{t.id}</button>
+          <Link to={`/tournament/${tournament}/${t.name}`}>
+            <button className="btn btn-info">{t.name}</button>
+          </Link>
+        </td>
+        <td>{t.match}</td>
+        <td>{t.win}</td>
+        <td>{t.loss}</td>
+        <td>{t.draw}</td>
+        <td>{t.point}</td>
+      </tr>
+    ))
+  }
+
+
+  function getBody(match) {
+    return match.map((t, index) =>
+      <tr key={index}>
+        <td>
+          <Link to={`/tournament/${tournament}/${t.id}`}>
+            <button type="button" className="btn btn-info">{t.id}</button>
           </Link>
         </td>
         <td> {t.team1}</td>
@@ -69,9 +102,9 @@ export default function Tournament() {
         <td> {t.winner} </td>
       </tr>
     );
-    return MatchList;
   }
 
+ 
   return (
     <div>
       <h2>Point Table:</h2>
@@ -89,23 +122,8 @@ export default function Tournament() {
           </thead>
 
           <tbody>
-            {
-              teams.map((t, index) => (
-                <tr key={index}>
-                  <td>
-                    <Link to='/tournament'>
-                      <button type="button" class="btn btn-info">{t.name}</button>
-                    </Link>
-                  </td>
-                  <td>{t.match}</td>
-                  <td>{t.win}</td>
-                  <td>{t.loss}</td>
-                  <td>{t.draw}</td>
-                  <td>{t.point}</td>
-                </tr>
-              ))
 
-            }
+            {getPointTable(teams)}
 
           </tbody>
 
@@ -134,6 +152,7 @@ export default function Tournament() {
                   <th>Team2</th>
                   <th>Date</th>
                   <th>Time</th>
+                  <th>Winner</th>
                 </tr>
               </thead>
 
@@ -158,6 +177,7 @@ export default function Tournament() {
                   <th>Team2</th>
                   <th>Date</th>
                   <th>Time</th>
+                  <th>Winner</th>
                 </tr>
               </thead>
 
@@ -178,9 +198,9 @@ export default function Tournament() {
                   <th>Match id</th>
                   <th>Team1</th>
                   <th>Team2</th>
-                  <th>Winner</th>
                   <th>Date</th>
                   <th>Time</th>
+                  <th>Winner</th>
                 </tr>
               </thead>
 

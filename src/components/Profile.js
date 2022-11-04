@@ -32,6 +32,25 @@ export default function Profile({user}) {
     })
   }, [])
 
+  function getBody(tournaments) {
+    const tournamentList = tournaments.map((t, index) =>
+      <tr key={index}>
+        <td>
+          <Link to={`/tournament/${t.name}`}>
+            <button type="button" class="btn btn-info">{t.name}</button>
+          </Link>
+        </td>
+        <td>{t.startDate}</td>
+        <td>{t.endDate}</td>
+        <td>{t.prize}</td>
+        <td>{t.village}</td>
+        <td>{t.city}</td>
+        <td>{t.state}</td>
+      </tr>
+    );
+    return tournamentList;
+  }
+  
   return (
     <div>
       <h2>Welcome - {user.name}</h2>
@@ -61,23 +80,7 @@ export default function Profile({user}) {
 
               <tbody>
 
-                {
-                  tournaments.map((t, index) => (
-                    <tr key={index}>
-                      <td>
-                        <Link to='/tournament'>
-                          <button type="button" class="btn btn-info">{t.name}</button>
-                        </Link>
-                      </td>
-                      <td>{t.startDate}</td>
-                      <td>{t.endDate}</td>
-                      <td>{t.prize}</td>
-                      <td>{t.village}</td>
-                      <td>{t.city}</td>
-                      <td>{t.state}</td>
-                    </tr>
-                  ))
-                }
+                {getBody(tournaments)}
 
               </tbody>
 

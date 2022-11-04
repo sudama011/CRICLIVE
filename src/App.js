@@ -21,7 +21,6 @@ const ScheduleMatch = lazy(() => import('./components/Tournament/ScheduleMatch')
 
 const Team = lazy(() => import('./components/Team/Team'));
 const AddPlayer = lazy(() => import('./components/Team/AddPlayer'));
-const Player = lazy(() => import('./components/Team/Player'));
 
 
 function App() {
@@ -53,19 +52,18 @@ function App() {
 
         <Routes>
 
-          <Route path="/*" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Suspense><Signup /></Suspense>} />
           <Route path="/login" element={<Suspense><Login /></Suspense>} />
           <Route path="/profile" element={<Suspense><Profile user={user} /></Suspense>} />
 
           <Route path="/createtournament" element={<Suspense><CreateTournament user={user} /></Suspense>} />
-          <Route path="/tournament" element={<Suspense><Tournament /></Suspense>} />
+          <Route path="/tournament/:tournament" element={<Suspense><Tournament /></Suspense>} />
           <Route path="/addteam" element={<Suspense><AddTeam /></Suspense>} />
           <Route path="/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />
 
-          <Route path="/team" element={<Suspense><Team /></Suspense>} />
-          <Route path="/addplayer" element={<Suspense><AddPlayer /></Suspense>} />
-          <Route path="/player" element={<Suspense><Player /></Suspense>} />
+          <Route path="/tournament/:tournament/:team" element={<Suspense><Team /></Suspense>} />
+          <Route path="/tournament/:tournament/:team/:addplayer" element={<Suspense><AddPlayer /></Suspense>} />
           <Route path="/match/*" element={<Suspense><ThemeProvider theme={theme}>
             <Container />
           </ThemeProvider></Suspense>} />
