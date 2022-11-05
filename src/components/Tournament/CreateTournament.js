@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Tournament.module.css";
+import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
 import { doc, setDoc } from "firebase/firestore";
@@ -43,7 +43,7 @@ function CreateTournament({ user }) {
   };
 
   const handleSubmission = (e) => {
-    if (!name || !startDate || !endDate || !prize || !city || !state) {
+    if (!name.current.value || !startDate.current.value || !endDate.current.value || !prize.current.value || !city.current.value || !state.current.value) {
       setErrorMsg("Fill all fields");
       return;
     }
@@ -63,7 +63,8 @@ function CreateTournament({ user }) {
             label="name"
             type="text"
             ref={name}
-            placeholder="Enter Tournament Name" />
+            placeholder="Enter Tournament Name"
+            required />
         </div>
 
         <div className={Style.container}>
@@ -71,7 +72,8 @@ function CreateTournament({ user }) {
           <input
             type="date"
             ref={startDate}
-            placeholder="Start Date" />
+            placeholder="Start Date"
+            required />
         </div>
 
         <div className={Style.container}>
@@ -79,7 +81,8 @@ function CreateTournament({ user }) {
           <input
             type="date"
             ref={endDate}
-            placeholder="End Date" />
+            placeholder="End Date"
+            required />
         </div>
 
         <div className={Style.container}>
@@ -87,7 +90,8 @@ function CreateTournament({ user }) {
           <input
             type="number"
             ref={prize}
-            placeholder="Prize Money" />
+            placeholder="Prize Money"
+            required />
         </div>
 
         <div className={Style.container}>
@@ -103,7 +107,8 @@ function CreateTournament({ user }) {
           <input
             type="text"
             ref={city}
-            placeholder="City" />
+            placeholder="City"
+            required />
         </div>
 
         <div className={Style.container}>
@@ -111,7 +116,8 @@ function CreateTournament({ user }) {
           <input
             type="text"
             ref={state}
-            placeholder="State" />
+            placeholder="State"
+            required />
         </div>
 
         <div className={styles.footer}>

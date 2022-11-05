@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./Tournament.module.css";
+import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
 import { doc, setDoc} from "firebase/firestore";
@@ -35,7 +35,7 @@ export default function AddTeam() {
   };
 
   const handleSubmission = (e) => {
-    if (!name) {
+    if (!name.current.value) {
       setErrorMsg("Fill all fields");
       return;
     }

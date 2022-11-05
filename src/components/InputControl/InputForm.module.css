@@ -10,6 +10,7 @@
 }
 
 .innerBox {
+    min-width: 40%;
     height: fit-content;
     width: fit-content;
     background-color: #fff;

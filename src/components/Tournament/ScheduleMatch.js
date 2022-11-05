@@ -1,11 +1,18 @@
 import React, { useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import styles from "./Tournament.module.css";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
 import { doc, setDoc } from "firebase/firestore";
 
 export default function ScheduleMatch() {
+  const location = useLocation();
+  const teams = location.state.teams;
+
+  const selectTeam = teams.map((team, index) => (
+    <option key={index} value={team.name}>{team.name}</option>
+  ));
+
   const { tournament } = useParams();
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");
@@ -25,7 +32,7 @@ export default function ScheduleMatch() {
         team2: team2.current.value,
         date: date.current.value,
         time: time.current.value,
-        winner:'-'
+        winner: '-'
       }
       await setDoc(doc(db, `tournaments/${tournament}/matches`, values.id), values);
 
@@ -40,7 +47,11 @@ export default function ScheduleMatch() {
   };
 
   const handleSubmission = (e) => {
-    if (!id && !team1 && !team2 && !date && !time) {
+    if (team1.current.value === team2.current.value) {
+      setErrorMsg("team1 cannot be equal to team2.");
+      return;
+    }
+    if (!id.current.value || !team1.current.value || !team2.current.value || !date.current.value || !time.current.value) {
       setErrorMsg("Fill all fields");
       return;
     }
@@ -64,18 +75,12 @@ export default function ScheduleMatch() {
 
         <div className={Style.container}>
           <label>Team1</label>
-          <input
-            type="text"
-            ref={team1}
-            placeholder="Team1 Name" />
+          <select ref={team1}>{selectTeam}</select>
         </div>
 
         <div className={Style.container}>
           <label>Team2</label>
-          <input
-            type="text"
-            ref={team2}
-            placeholder="Team2 Name" />
+          <select ref={team2}>{selectTeam}</select>
         </div>
 
         <div className={Style.container}>

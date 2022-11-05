@@ -10,8 +10,8 @@ import Footer from './components/Home/Footer';
 import Navbar from './components/Home/Navbar';
 import Home from './components/Home/Home';
 
-const Signup = lazy(() => import('./components/Signup/Signup'));
-const Login = lazy(() => import('./components/Login/Login'));
+const Signup = lazy(() => import('./components/Signup'));
+const Login = lazy(() => import('./components/Login'));
 const Profile = lazy(() => import('./components/Profile'));
 
 const CreateTournament = lazy(() => import('./components/Tournament/CreateTournament'));

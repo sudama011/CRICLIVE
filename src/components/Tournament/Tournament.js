@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 export default function Tournament() {
-
+  const navigate = useNavigate();
   const { tournament } = useParams();
 
   const [teams, setTeams] = useState([{
@@ -61,7 +61,7 @@ export default function Tournament() {
       querySnapshot.forEach((t) => {
         arr.push({ ...t.data() });
       })
-     
+
       setPresentMatch(arr);
       setFutureMatch(arr);
       setPastMatch(arr);
@@ -104,7 +104,6 @@ export default function Tournament() {
     );
   }
 
- 
   return (
     <div>
       <h2>Point Table:</h2>
@@ -136,10 +135,11 @@ export default function Tournament() {
       </Link>
       <br />
       <br />
-    
-      <Link to={`/tournament/${tournament}/scheduleMatch`}>
-        <button type="button" className="btn btn-info">Schedule Match</button>
-      </Link>
+
+      <button type="button" onClick={(e) => {
+        navigate(`/tournament/${tournament}/scheduleMatch`, { state: { teams: teams } });
+      }} className="btn btn-info">Schedule Match</button>
+
       <br />
       <br />
 

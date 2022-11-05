@@ -37,7 +37,7 @@ export default function Profile({user}) {
       <tr key={index}>
         <td>
           <Link to={`/tournament/${t.name}`}>
-            <button type="button" class="btn btn-info">{t.name}</button>
+            <button type="button" className="btn btn-info">{t.name}</button>
           </Link>
         </td>
         <td>{t.startDate}</td>

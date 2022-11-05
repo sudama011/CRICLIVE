@@ -18,6 +18,14 @@
     color: #000;
 }
 
+.container select {
+    border-radius: 5px;
+    border: 1px solid #dddddd;
+    outline: none;
+    padding: 10px 15px;
+    color: #000;
+}
+
 .container input:hover {
     border-color: #ccc;
 }
