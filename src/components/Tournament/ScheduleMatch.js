@@ -4,7 +4,6 @@ import styles from "./Tournament.module.css";
 import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
 import { doc, setDoc } from "firebase/firestore";
-import { date } from "yup/lib/locale";
 
 export default function ScheduleMatch() {
   const { tournament } = useParams();

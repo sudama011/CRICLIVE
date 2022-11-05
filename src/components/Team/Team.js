@@ -33,36 +33,33 @@ export default function Team() {
       setIsShown(current => ({ ...current, [index]: true }));
   };
   return (
-    <div>
+    <>
       <h3>Team Name : {team}</h3>
       <h5>Playing in tournament : {tournament}</h5>
 
+      <br />
       <Link to={`/tournament/${tournament}/${team}/addplayer`}>
         <button type="button" className="btn btn-info">Add New Player</button>
       </Link>
-      <br/>
-      <br/>
+      <br />
+      <br />
+
+      <h2>All Team players :</h2>
 
       <ul className="list-group">
-        <li className="list-group-item list-group-item-primary">
-          <h2>All Team Player</h2>
+        {players.map((p, index) => (
+          <li key={index} className="list-group-item list-group-item-success p-2">
 
-          <ul className="list-group">
-            {players.map((p, index) => (
-              <li key={index} className="list-group-item list-group-item-success">
+            <button data-index={index} className="btn btn-info"
+              onClick={handleClick}
+            >{p.name}</button>
 
-                <button data-index={index} className="btn btn-info"
-                  onClick={handleClick}
-                >{p.name}</button>
+            {isShown[index] && <Player p={p} />}
 
-                {isShown[index] && <Player p={p} />}
-
-              </li>
-            ))
-            }
-          </ul>
-        </li>
+          </li>
+        ))
+        }
       </ul>
-    </div >
+    </ >
   )
 }
