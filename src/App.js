@@ -59,15 +59,14 @@ function App() {
 
           <Route path="/createtournament" element={<Suspense><CreateTournament user={user} /></Suspense>} />
           <Route path="/tournament/:tournament" element={<Suspense><Tournament /></Suspense>} />
-          <Route path="/addteam" element={<Suspense><AddTeam /></Suspense>} />
-          <Route path="/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />
+          <Route path="/tournament/:tournament/addteam" element={<Suspense><AddTeam /></Suspense>} />
+          <Route path="/tournament/:tournament/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />
 
           <Route path="/tournament/:tournament/:team" element={<Suspense><Team /></Suspense>} />
           <Route path="/tournament/:tournament/:team/:addplayer" element={<Suspense><AddPlayer /></Suspense>} />
           <Route path="/match/*" element={<Suspense><ThemeProvider theme={theme}>
             <Container />
           </ThemeProvider></Suspense>} />
-
 
         </Routes>
 

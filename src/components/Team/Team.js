@@ -35,12 +35,13 @@ export default function Team() {
   return (
     <div>
       <h3>Team Name : {team}</h3>
-      <h5>Playing in tournament : {tournament }</h5>
-      <form action="team/add_player" method="get">
-        <Link to={`/tournament/${tournament}/${team}/addplayer`}>
-          <button type="button" className="btn btn-info">Add New Player</button></Link>
-      </form>
-      <br />
+      <h5>Playing in tournament : {tournament}</h5>
+
+      <Link to={`/tournament/${tournament}/${team}/addplayer`}>
+        <button type="button" className="btn btn-info">Add New Player</button>
+      </Link>
+      <br/>
+      <br/>
 
       <ul className="list-group">
         <li className="list-group-item list-group-item-primary">

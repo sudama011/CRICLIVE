@@ -6,9 +6,9 @@ export default function Footer() {
         <MDBFooter bgColor='light' className='text-center text-lg-start text-muted'>
 
             <section className=''>
-                <MDBContainer className='text-center text-md-start mt-5'>
+                <MDBContainer className='text-center text-md-start pt-2'>
                     <MDBRow className='mt-3'>
-                        <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-4'>
+                        <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-2'>
                             <h6 className='text-uppercase fw-bold mb-4'>
                                 <MDBIcon icon="gem" className="me-3" />
                                 Criclive
@@ -30,7 +30,7 @@ export default function Footer() {
 
                         </MDBCol>
 
-                        <MDBCol md="2" lg="2" xl="2" className='mx-auto mb-4'>
+                        <MDBCol md="2" lg="2" xl="2" className='mx-auto mb-2'>
                             <h6 className='text-uppercase fw-bold mb-4'>Follow Us On</h6>
                             <p>
                                 <a href='https://www.facebook.com/sudama.dhakad.31' title='Facebook' target="_blank" rel="noopener noreferrer" className='me-4 text-reset'>
@@ -54,7 +54,7 @@ export default function Footer() {
 
                         </MDBCol>
 
-                        <MDBCol md="3" lg="2" xl="2" className='mx-auto mb-4'>
+                        <MDBCol md="3" lg="2" xl="2" className='mx-auto mb-2'>
                             <h6 className='text-uppercase fw-bold mb-4'>COMPANY</h6>
                             <p>
                                 <a href='#!' className='text-reset'>
@@ -83,7 +83,7 @@ export default function Footer() {
                 </MDBContainer>
             </section>
 
-            <div className='text-center p-4' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
+            <div className='text-center p-2' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                 © 2022 Criclive, All rights reserved
             </div>
         </MDBFooter>

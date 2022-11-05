@@ -5,7 +5,7 @@ import { Link, useParams } from "react-router-dom";
 
 export default function Tournament() {
 
-  const tournament = useParams().tournament;
+  const { tournament } = useParams();
 
   const [teams, setTeams] = useState([{
     name: "Loding...",
@@ -131,13 +131,16 @@ export default function Tournament() {
       </div>
 
       <br />
-      <form action="/tournament/add_team" method="get">
-        <button type="submit" name="tournament" value="{{tournament_name}}">Add New Team</button>
-      </form>
+      <Link to={`/tournament/${tournament}/addteam`}>
+        <button type="button" className="btn btn-info">Add Team</button>
+      </Link>
       <br />
-      <form action="/tournament/create_match" method="get">
-        <button type="submit" name="tournament" value="{{tournament_name}}">Create New Match</button>
-      </form>
+      <br />
+    
+      <Link to={`/tournament/${tournament}/scheduleMatch`}>
+        <button type="button" className="btn btn-info">Schedule Match</button>
+      </Link>
+      <br />
       <br />
 
       <ul className="list-group">
