@@ -1,11 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
 import { doc, setDoc } from "firebase/firestore";
+import { UserContext } from "../../context/userContext";
 
-function CreateTournament({ user }) {
+function CreateTournament() {
+  const { user } = useContext(UserContext);
 
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");

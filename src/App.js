@@ -1,10 +1,11 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useEffect, lazy, Suspense, useContext } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { auth } from "./firebase";
 
 import { ThemeProvider } from '@material-ui/core'
 import { theme } from './components/ui/Theme'
 import Container from './main/Container'
+import { UserContext } from './context/userContext';
 
 import Footer from './components/Home/Footer';
 import Navbar from './components/Home/Navbar';
@@ -25,22 +26,11 @@ const AddPlayer = lazy(() => import('./components/Team/AddPlayer'));
 
 function App() {
 
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    uid: ""
-  })
+  const { updateUser } = useContext(UserContext)
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser((prev) => ({ ...prev, name: user.displayName, email: user.email, uid: user.uid }));
-      } else {
-        setUser({
-          name: "",
-          email: "",
-          uid: ""
-        })
-      }
+      updateUser(user);
     });
   }, []);
 
@@ -48,16 +38,16 @@ function App() {
     <>
 
       <BrowserRouter>
-        <Navbar user={user} />
+        <Navbar />
 
         <Routes>
 
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Suspense><Signup /></Suspense>} />
           <Route path="/login" element={<Suspense><Login /></Suspense>} />
-          <Route path="/profile" element={<Suspense><Profile user={user} /></Suspense>} />
+          <Route path="/profile" element={<Suspense><Profile /></Suspense>} />
 
-          <Route path="/createtournament" element={<Suspense><CreateTournament user={user} /></Suspense>} />
+          <Route path="/createtournament" element={<Suspense><CreateTournament /></Suspense>} />
           <Route path="/tournament/:tournament" element={<Suspense><Tournament /></Suspense>} />
           <Route path="/tournament/:tournament/addteam" element={<Suspense><AddTeam /></Suspense>} />
           <Route path="/tournament/:tournament/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />

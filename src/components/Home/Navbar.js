@@ -1,10 +1,13 @@
-import React from 'react'
+import React,{useContext} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from './logo-criclive.png'
 import { getAuth, signOut } from "firebase/auth";
+import { UserContext } from '../../context/userContext';
 
-export default function Navbar({ user }) {
-
+export default function Navbar() {
+  
+    const { user } = useContext(UserContext);
+    
     const navigate = useNavigate();
     const auth = getAuth();
 
@@ -20,7 +23,7 @@ export default function Navbar({ user }) {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light ">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
             <img src={logo} className="rounded" alt="criclive" style={{ height: "50px" }} />
 
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -45,9 +48,9 @@ export default function Navbar({ user }) {
                         <Link className="nav-link active" onClick={handleLogout} >Logout</Link>
                     </li>}
 
-                    <li className="nav-item" style={{ margin: "6px" }}>
+                    {user.name && <li className="nav-item" style={{ margin: "6px" }}>
                         <Link className="nav-link active" to="/profile">Profile</Link>
-                    </li>
+                    </li>}
 
                 </ul>
                 <form className="form-inline my-2 my-lg-0">

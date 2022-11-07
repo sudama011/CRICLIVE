@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { db } from '../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { UserContext } from '../context/userContext';
 
-export default function Profile({user}) {
+export default function Profile() {
 
-  if (!user.name) {
-    return (
-      <h2>Login please</h2>
-    )
-  }
+  const { user } = useContext(UserContext);
   const [tournaments, setTournaments] = useState([{
     name: "Loding...",
     startDate: "Loding...",
@@ -50,7 +47,7 @@ export default function Profile({user}) {
     );
     return tournamentList;
   }
-  
+
   return (
     <div>
       <h2>Welcome - {user.name}</h2>
