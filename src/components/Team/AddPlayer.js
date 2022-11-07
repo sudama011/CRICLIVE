@@ -70,7 +70,9 @@ export default function AddPlayer() {
             label="Team name"
             type="text"
             ref={name}
-            placeholder="Enter Player Name" />
+            placeholder="Enter Player Name"
+            autoFocus
+          />
         </div>
 
         <div className={styles.footer}>

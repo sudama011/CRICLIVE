@@ -55,7 +55,10 @@ export default function AddTeam() {
             label="Team name"
             type="text"
             ref={name}
-            placeholder="Enter Team Name" />
+            placeholder="Enter Team Name"
+            autoFocus
+          />
+          
         </div>
 
         <div className={styles.footer}>

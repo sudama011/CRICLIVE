@@ -70,7 +70,10 @@ export default function ScheduleMatch() {
           <input
             type="number"
             ref={id}
-            placeholder="Enter Match id" />
+            placeholder="Enter Match id"
+            autoFocus
+          />
+
         </div>
 
         <div className={Style.container}>

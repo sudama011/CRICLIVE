@@ -66,6 +66,7 @@ function CreateTournament() {
             type="text"
             ref={name}
             placeholder="Enter Tournament Name"
+            autoFocus
             required />
         </div>
 
