@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, query, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot,orderBy } from "firebase/firestore";
 import { Link } from "react-router-dom";
 function Home() {
 
@@ -39,7 +39,9 @@ function Home() {
     }]);
 
     useEffect(() => {
-        const q = query(collection(db, 'tournaments'))
+        const q = query(collection(db, 'tournaments'),
+            orderBy('prize', 'desc')
+        );
         onSnapshot(q, (querySnapshot) => {
             let arr = []
             querySnapshot.forEach((t) => {

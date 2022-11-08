@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { db } from '../firebase';
-import { collection, query, onSnapshot } from "firebase/firestore";
+import { collection, query, onSnapshot, where } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { UserContext } from '../context/userContext';
 
@@ -19,15 +19,22 @@ export default function Profile() {
   }]);
 
   useEffect(() => {
-    const q = query(collection(db, 'tournaments'))
-    onSnapshot(q, (querySnapshot) => {
-      let arr = []
-      querySnapshot.forEach((t) => {
-        arr.push({ ...t.data() });
+    if (user.uid) {
+      const q = query(collection(db, 'tournaments'),
+        where(`organiser.uid`, '==', `${user.uid}`)
+      );
+
+      onSnapshot(q, (querySnapshot) => {
+        let arr = []
+        querySnapshot.forEach((t) => {
+          arr.push({ ...t.data() });
+        })
+        arr.sort(function (a, b) { return b.prize - a.prize });
+
+        setTournaments(arr);
       })
-      setTournaments(arr);
-    })
-  }, [])
+    }
+  }, [user]);
 
   function getBody(tournaments) {
     const tournamentList = tournaments.map((t, index) =>

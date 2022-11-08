@@ -1,4 +1,4 @@
-import React, { useState, useRef,useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
@@ -27,7 +27,7 @@ function CreateTournament() {
         name: name.current.value,
         startDate: startDate.current.value,
         endDate: endDate.current.value,
-        prize: prize.current.value,
+        prize: Number(prize.current.value),
         village: village.current.value,
         city: city.current.value,
         state: state.current.value,
