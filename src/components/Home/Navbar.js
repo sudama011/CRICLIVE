@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
+// eslint-disable-next-line 
 import logo from './logo-criclive.png'
 import { getAuth, signOut } from "firebase/auth";
 import { UserContext } from '../../context/userContext';

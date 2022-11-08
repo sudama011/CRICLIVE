@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { auth } from "./firebase";
 
 import { ThemeProvider } from '@material-ui/core'
-import { theme } from './components/ui/Theme'
-import Container from './main/Container'
+import { theme } from './components/Match/ui/Theme'
+import Container from './components/Match/Container'
 import { UserContext } from './context/userContext';
 
 import Footer from './components/Home/Footer';
@@ -42,19 +42,19 @@ function App() {
 
         <Routes>
 
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Suspense><Signup /></Suspense>} />
-          <Route path="/login" element={<Suspense><Login /></Suspense>} />
-          <Route path="/profile" element={<Suspense><Profile /></Suspense>} />
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/signup" element={<Suspense><Signup /></Suspense>} />
+          <Route exact path="/login" element={<Suspense><Login /></Suspense>} />
+          <Route exact path="/profile" element={<Suspense><Profile /></Suspense>} />
 
-          <Route path="/createtournament" element={<Suspense><CreateTournament /></Suspense>} />
-          <Route path="/tournament/:tournament" element={<Suspense><Tournament /></Suspense>} />
-          <Route path="/tournament/:tournament/addteam" element={<Suspense><AddTeam /></Suspense>} />
-          <Route path="/tournament/:tournament/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />
+          <Route exact path="/createtournament" element={<Suspense><CreateTournament /></Suspense>} />
+          <Route exact path="/tournament/:tournament" element={<Suspense><Tournament /></Suspense>} />
+          <Route exact path="/tournament/:tournament/addteam" element={<Suspense><AddTeam /></Suspense>} />
+          <Route exact path="/tournament/:tournament/scheduleMatch" element={<Suspense><ScheduleMatch /></Suspense>} />
 
-          <Route path="/tournament/:tournament/:team" element={<Suspense><Team /></Suspense>} />
-          <Route path="/tournament/:tournament/:team/:addplayer" element={<Suspense><AddPlayer /></Suspense>} />
-          <Route path="/match/*" element={<Suspense><ThemeProvider theme={theme}>
+          <Route exact path="/tournament/:tournament/:team" element={<Suspense><Team /></Suspense>} />
+          <Route exact path="/tournament/:tournament/:team/addplayer" element={<Suspense><AddPlayer /></Suspense>} />
+          <Route exact path="/match/*" element={<Suspense><ThemeProvider theme={theme}>
             <Container />
           </ThemeProvider></Suspense>} />
 

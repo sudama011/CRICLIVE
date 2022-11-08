@@ -91,7 +91,13 @@ export default function Tournament() {
     return match.map((t, index) =>
       <tr key={index}>
         <td>
-          <Link to={`/tournament/${tournament}/${t.id}`}>
+          <Link to={{
+            pathname: '/match',
+            state: {
+              a: "fgsjflsda",
+              b: ";l;gkfh"
+            }
+          }}>
             <button type="button" className="btn btn-info">{t.id}</button>
           </Link>
         </td>

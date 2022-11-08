@@ -84,7 +84,7 @@ export default function Footer() {
             </section>
 
             <div className='text-center p-2' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
-                © 2022 Criclive, All rights reserved
+                © 2022 criclive, All rights reserved
             </div>
         </MDBFooter>
     );
