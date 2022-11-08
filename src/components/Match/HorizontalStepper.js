@@ -12,7 +12,7 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import { Formik } from 'formik'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 import * as Yup from 'yup'
 
 const useStyles = makeStyles((theme) => ({
@@ -61,6 +61,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 const HorizontalStepper = () => {
+  const match = useLocation().state;
+
   const navigate = useNavigate()
   const classes = useStyles()
   const [activeStep, setActiveStep] = React.useState(0)
@@ -74,8 +76,8 @@ const HorizontalStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
   }
   const initialValues = {
-    team1: '',
-    team2: '',
+    team1: match.team1,
+    team2: match.team2,
     maxOver: '',
     batting: '',
   }
@@ -131,6 +133,7 @@ const HorizontalStepper = () => {
                     <div>
                       <div className={classes.formGroup}>
                         <TextField
+                          disabled
                           id='team1'
                           name='team1'
                           label='Team1 Name*'
@@ -147,6 +150,7 @@ const HorizontalStepper = () => {
                       </div>
                       <div className={classes.formGroup}>
                         <TextField
+                          disabled
                           id='team2'
                           name='team2'
                           label='Team2 Name*'

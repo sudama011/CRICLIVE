@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
 
 export default function Tournament() {
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const { tournament } = useParams();
 
@@ -91,13 +93,7 @@ export default function Tournament() {
     return match.map((t, index) =>
       <tr key={index}>
         <td>
-          <Link to={{
-            pathname: '/match',
-            state: {
-              a: "fgsjflsda",
-              b: ";l;gkfh"
-            }
-          }}>
+          <Link to='/match' state={{ matchid: t.id, team1: t.team1, team2: t.team2 }}>
             <button type="button" className="btn btn-info">{t.id}</button>
           </Link>
         </td>
@@ -106,7 +102,7 @@ export default function Tournament() {
         <td> {t.date} </td>
         <td> {t.time}</td>
         <td> {t.winner} </td>
-      </tr>
+      </tr >
     );
   }
 
@@ -136,18 +132,20 @@ export default function Tournament() {
       </div>
 
       <br />
-      <Link to={`/tournament/${tournament}/addteam`}>
-        <button type="button" className="btn btn-info">Add Team</button>
-      </Link>
-      <br />
-      <br />
+      {user.uid &&
+        <div>
+          <Link to={`/tournament/${tournament}/addteam`}>
+            <button type="button" className="btn btn-info">Add Team</button>
+          </Link>
+          <br />
+          <br />
+          <button type="button" onClick={(e) => {
+            navigate(`/tournament/${tournament}/scheduleMatch`, { state: { teams: teams } });
+          }} className="btn btn-info">Schedule Match</button>
 
-      <button type="button" onClick={(e) => {
-        navigate(`/tournament/${tournament}/scheduleMatch`, { state: { teams: teams } });
-      }} className="btn btn-info">Schedule Match</button>
-
-      <br />
-      <br />
+          <br />
+          <br />
+        </div>}
 
       <ul className="list-group">
         <li className="list-group-item list-group-item-success">

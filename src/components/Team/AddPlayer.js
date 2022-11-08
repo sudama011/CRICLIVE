@@ -17,26 +17,34 @@ export default function AddPlayer() {
     try {
       const values = {
         name: name.current.value,
-        match: 0,
-        inning: 0,
-        run: 0,
-        ball: 0,
-        4: 0,
-        6: 0,
-        30: 0,
-        50: 0,
-        100: 0,
-        avg: 0,
-        srate: 0,
-        best: 0,
-
-        binning: 0,
-        brun: 0,
-        bball: 0,
-        bbest: 0,
-        wicket: 0,
-        beconomy: 0,
-        bavg: 0
+        Batting: {
+          M: 0,
+          Inn: 0,
+          No: 0,
+          Runs: 0,
+          Hs: 0,
+          Avg: 0.0,
+          BF: 0,
+          SR: 0,
+          4: 0,
+          6: 0,
+          50: 0,
+          100: 0
+        },
+        Bowling: {
+          M: 0,
+          Inn: 0,
+          B: 0,
+          Runs: 0,
+          Wkts: 0,
+          BB: {
+            W: 0,
+            R: 0
+          },
+          Econ: 0,
+          Avg: 0,
+          5: 0
+        }
       }
       await setDoc(doc(db, `tournaments/${tournament}/teams/${team}/players`, values.name), values);
 

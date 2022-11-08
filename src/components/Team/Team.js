@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
 import { Link, useParams } from "react-router-dom";
 import { Player } from './Player';
-
+import { UserContext } from "../../context/userContext";
 export default function Team() {
-
+  const { user } = useContext(UserContext);
   const { tournament, team } = useParams();
 
   const [players, setPlayers] = useState([{
@@ -38,11 +38,13 @@ export default function Team() {
       <h5>Playing in tournament : {tournament}</h5>
 
       <br />
-      <Link to={`/tournament/${tournament}/${team}/addplayer`}>
-        <button type="button" className="btn btn-info">Add New Player</button>
-      </Link>
-      <br />
-      <br />
+      {user.uid && <div>
+        <Link to={`/tournament/${tournament}/${team}/addplayer`}>
+          <button type="button" className="btn btn-info">Add New Player</button>
+        </Link>
+        <br />
+        <br />
+      </div>}
 
       <h2>All Team players :</h2>
 
@@ -54,7 +56,7 @@ export default function Team() {
               onClick={handleClick}
             >{p.name}</button>
 
-            {isShown[index] && <Player p={p} />}
+            {isShown[index] && <Player Batting={p.Batting} Bowling={p.Bowling} />}
 
           </li>
         ))

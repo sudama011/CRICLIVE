@@ -1,11 +1,8 @@
 import { Box, Container, Toolbar, Typography } from '@material-ui/core'
 import React from 'react'
-import { useLocation } from 'react-router-dom'
 import HorizontalStepper from './HorizontalStepper'
 
-const StepperContainer = () => {
-  const location = useLocation();
-  console.log(location.state);
+const StepperContainer = () => { 
   return (
     <div>
 

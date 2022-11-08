@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Player({ p }) {
+export function Player({ Batting, Bowling }) {
 
   return (
     <>
@@ -10,37 +10,37 @@ export function Player({ p }) {
         <li className="list-group-item list-group-item-primary p-1">
           <h3>Batting Stats :</h3>
           <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2" cellPadding="5">
+            <table className="table table-striped table-info" border="2">
               <thead>
                 <tr>
-                  <th>Match</th>
-                  <th>Inning</th>
-                  <th>Run</th>
-                  <th>Ball</th>
+                  <th>M</th>
+                  <th>Inn</th>
+                  <th>No</th>
+                  <th>Runs</th>
+                  <th>Hs</th>
+                  <th>Avg</th>
+                  <th>BF</th>
+                  <th>SR</th>
                   <th>4</th>
                   <th>6</th>
-                  <th>Strike Rate</th>
-                  <th>Average</th>
-                  <th>30s</th>
-                  <th>50s</th>
-                  <th>100s</th>
-                  <th>best</th>
+                  <th>50</th>
+                  <th>100</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{p.match}</td>
-                  <td>{p.inning}</td>
-                  <td>{p.run}</td>
-                  <td>{p.ball}</td>
-                  <td>{p[4]}</td>
-                  <td>{p[6]}</td>
-                  <td>{p.srate}</td>
-                  <td>{p.avg}</td>
-                  <td>{p[30]}</td>
-                  <td>{p[50]}</td>
-                  <td>{p[100]}</td>
-                  <td>{p.best}</td>
+                  <td>{Batting.M}</td>
+                  <td>{Batting.Inn}</td>
+                  <td>{Batting.No}</td>
+                  <td>{Batting.Runs}</td>
+                  <td>{Batting.Hs}</td>
+                  <td>{Batting.Avg}</td>
+                  <td>{Batting.BF}</td>
+                  <td>{Batting.SR}</td>
+                  <td>{Batting[4]}</td>
+                  <td>{Batting[6]}</td>
+                  <td>{Batting[50]}</td>
+                  <td>{Batting[100]}</td>
                 </tr>
               </tbody>
             </table>
@@ -49,29 +49,31 @@ export function Player({ p }) {
         <li className="list-group-item list-group-item-primary p-1">
           <h3>Bowling Stats :</h3>
           <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2" cellPadding="5">
+            <table className="table table-striped table-info" border="2">
               <thead>
                 <tr>
-                  <th>Match</th>
-                  <th>Inning</th>
-                  <th>Ball</th>
-                  <th>Run</th>
-                  <th>Wicket</th>
-                  <th>Economy</th>
-                  <th>Average</th>
-                  <th>Best(w/r)</th>
+                  <th>M</th>
+                  <th>Inn</th>
+                  <th>B</th>
+                  <th>Runs</th>
+                  <th>Wkts</th>
+                  <th>BB</th>
+                  <th>Econ</th>
+                  <th>Avg</th>
+                  <th>5W</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>{p.match}</td>
-                  <td>{p.binning}</td>
-                  <td>{p.bball}</td>
-                  <td>{p.brun}</td>
-                  <td>{p.bwicket}</td>
-                  <td>{p.beconomy}</td>
-                  <td>{p.bavg}</td>
-                  <td>{p.bbest}</td>
+                  <td>{Bowling.M}</td>
+                  <td>{Bowling.Inn}</td>
+                  <td>{Bowling.B}</td>
+                  <td>{Bowling.Runs}</td>
+                  <td>{Bowling.Wkts}</td>
+                  <td>{Bowling.BB.W}/{Bowling.BB.R}</td>
+                  <td>{Bowling.Econ}</td>
+                  <td>{Bowling.Avg}</td>
+                  <td>{Bowling[5]}</td>
                 </tr>
               </tbody>
             </table>

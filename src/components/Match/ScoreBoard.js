@@ -1039,7 +1039,7 @@ const ScoreBoard = () => {
     </>
   )
   return (
-    <div className='container'>
+    <div >
       <div className='inning'>
         <div>
           {team1} vs {team2}, {inningNo === 1 ? '1st' : '2nd'} Inning

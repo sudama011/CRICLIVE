@@ -10,6 +10,7 @@
 #end-inning {
   height: 100%;
   padding: 4px;
+  font-size: 4vmin;
   outline: none;
   border: 1px solid #fff;
   border-radius: 4px;
@@ -88,7 +89,7 @@ table thead {
   max-width: 6.5rem;
 }
 .react-autosuggest__input--focused {
-  /* outline: none; */
+  outline: none;
 }
 .react-autosuggest__input--open {
   border-bottom-left-radius: 0;
