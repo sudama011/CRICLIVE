@@ -93,7 +93,7 @@ export default function Tournament() {
     return match.map((t, index) =>
       <tr key={index}>
         <td>
-          <Link to='/match' state={{ matchid: t.id, team1: t.team1, team2: t.team2 }}>
+          <Link to='/match' state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
             <button type="button" className="btn btn-info">{t.id}</button>
           </Link>
         </td>

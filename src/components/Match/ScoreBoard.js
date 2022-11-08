@@ -9,15 +9,22 @@ import Modal from '@mui/material/Modal'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Autosuggest from 'react-autosuggest'
 import { BATTING, OUT } from './constants/BattingStatus'
 import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
 import MathUtil from './util/MathUtil'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
+import { db } from '../../firebase';
 
-const ScoreBoard = () => {
+export default function ScoreBoard() {
+  const tournamentDetails = useLocation().state;
+  const tournament = tournamentDetails.tournament;
+  const matchid = tournamentDetails.matchid;
+  const t1 = tournamentDetails.team1;
+  const t2 = tournamentDetails.team2;
+
   const [inningNo, setInningNo] = useState(1)
   const [match, setMatch] = useState({ inning1: { batters: [], bowlers: [] }, inning2: { batters: [], bowlers: [] } })
   const [currentRunStack, setCurrentRunStack] = useState([])
@@ -63,165 +70,166 @@ const ScoreBoard = () => {
   const handleEndInning = (e) => {
     const endInningButton = document.getElementById('end-inning')
     if (endInningButton.textContent === 'Reset') {
-      navigate('/')
-    } else {
-      if (batter1.id !== undefined) {
-        const { id, name, run, ball, four, six, strikeRate, onStrike } = batter1
-        batters.push({
-          id,
-          name,
-          run,
-          ball,
-          four,
-          six,
-          strikeRate,
-          onStrike,
-          battingOrder: batter1.battingOrder,
-          battingStatus: BATTING,
-        })
-      }
-      if (batter2.id !== undefined) {
-        batters.push({
-          id: batter2.id,
-          name: batter2.name,
-          run: batter2.run,
-          ball: batter2.ball,
-          four: batter2.four,
-          six: batter2.six,
-          strikeRate: batter2.strikeRate,
-          onStrike: batter2.onStrike,
-          battingOrder: batter2.battingOrder,
-          battingStatus: BATTING,
-        })
-      }
-      if (bowler.id !== undefined) {
-        const currentDisplayOver = Math.round((ballCount === 6 ? 1 : ballCount * 0.1) * 10) / 10
-        let isMaidenOver = true
-        let countWicket = 0
-        let countNoBall = 0
-        let countWide = 0
-        const deliveries = ['1', '2', '3', '4', '6', 'wd']
-        for (let delivery of currentRunStack) {
-          delivery = delivery.toString()
-          if (deliveries.includes(delivery) || delivery.includes('nb')) {
-            isMaidenOver = false
-          }
-          if (delivery === 'W') {
-            countWicket++
-          }
-          if (delivery.includes('nb')) {
-            countNoBall++
-          }
-          if (delivery.includes('wd')) {
-            countWide++
-          }
-        }
-        if (ballCount !== 6) {
+      navigate('/');
+      return;
+    }
+
+    if (batter1.id !== undefined) {
+      const { id, name, run, ball, four, six, strikeRate, onStrike } = batter1
+      batters.push({
+        id,
+        name,
+        run,
+        ball,
+        four,
+        six,
+        strikeRate,
+        onStrike,
+        battingOrder: batter1.battingOrder,
+        battingStatus: BATTING,
+      })
+    }
+    if (batter2.id !== undefined) {
+      batters.push({
+        id: batter2.id,
+        name: batter2.name,
+        run: batter2.run,
+        ball: batter2.ball,
+        four: batter2.four,
+        six: batter2.six,
+        strikeRate: batter2.strikeRate,
+        onStrike: batter2.onStrike,
+        battingOrder: batter2.battingOrder,
+        battingStatus: BATTING,
+      })
+    }
+    if (bowler.id !== undefined) {
+      const currentDisplayOver = Math.round((ballCount === 6 ? 1 : ballCount * 0.1) * 10) / 10
+      let isMaidenOver = true
+      let countWicket = 0
+      let countNoBall = 0
+      let countWide = 0
+      const deliveries = ['1', '2', '3', '4', '6', 'wd']
+      for (let delivery of currentRunStack) {
+        delivery = delivery.toString()
+        if (deliveries.includes(delivery) || delivery.includes('nb')) {
           isMaidenOver = false
         }
-        const index = bowlers.findIndex((blr) => {
-          return blr.id === bowler.id
-        })
-        if (index !== -1) {
-          const existingBowler = bowlers[index]
-          const { maiden, wicket, noBall, wide, over } = existingBowler
-          const bowlerTotalOver = over + ballCount / 6
-          existingBowler.over = existingBowler.over + currentDisplayOver
-          existingBowler.maiden = isMaidenOver ? maiden + 1 : maiden
-          existingBowler.run = existingBowler.run + runsByOver
-          existingBowler.wicket = wicket + countWicket
-          existingBowler.noBall = noBall + countNoBall
-          existingBowler.wide = wide + countWide
-          existingBowler.economy = Math.round((existingBowler.run / bowlerTotalOver) * 100) / 100
-          bowlers[index] = existingBowler
-          setBowlers(bowlers)
-        } else {
-          if (ballCount !== 6) {
-            bowlers.push({
-              id: bowler.id,
-              name: bowler.name,
-              over: currentDisplayOver,
-              maiden: isMaidenOver ? 1 : 0,
-              run: runsByOver,
-              wicket: countWicket,
-              noBall: countNoBall,
-              wide: countWide,
-              economy: Math.round((runsByOver / (ballCount / 6)) * 100) / 100,
-            })
-            setBowlers(bowlers)
-          }
+        if (delivery === 'W') {
+          countWicket++
+        }
+        if (delivery.includes('nb')) {
+          countNoBall++
+        }
+        if (delivery.includes('wd')) {
+          countWide++
         }
       }
-      if (inningNo === 1) {
-        setMatch((state) => {
-          const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-          const totalSixes = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-          return {
-            ...state,
-            inning1: {
-              runs: totalRuns,
-              wickets: wicketCount,
-              runRate: crr,
-              overs: totalOvers,
-              four: totalFours,
-              six: totalSixes,
-              extra: extras,
-              batters,
-              bowlers,
-            },
-          }
-        })
-        setInningNo(2)
-        setCurrentRunStack([])
-        setTotalRuns(0)
-        setExtras({ total: 0, wide: 0, noBall: 0 })
-        setRunsByOver(0)
-        setWicketCount(0)
-        setTotalOvers(0)
-        setBallCount(0)
-        setOverCount(0)
-        setRecentOvers([])
-        setBatter1({})
-        setBatter2({})
-        setBatters([])
-        setBowlers([])
-        setBattingOrder(0)
-        setInputBowler('')
-        setBowler({})
-        setRemainingBalls(maxOver * 6)
-        setRemainingRuns(totalRuns + 1)
-        const bowlerNameElement = document.querySelector('.react-autosuggest__input')
-        bowlerNameElement.disabled = false
-        const batter1NameElement = document.getElementById('batter1Name')
-        batter1NameElement.value = ''
-        batter1NameElement.disabled = false
-        const batter2NameElement = document.getElementById('batter2Name')
-        batter2NameElement.value = ''
-        batter2NameElement.disabled = false
-        setStrikeValue('strike')
-        endInningButton.disabled = true
-      } else {
-        setMatch((state) => {
-          const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-          const totalSixes = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-          return {
-            ...state,
-            inning2: {
-              runs: totalRuns,
-              wickets: wicketCount,
-              runRate: crr,
-              overs: totalOvers,
-              four: totalFours,
-              six: totalSixes,
-              extra: extras,
-              batters,
-              bowlers,
-            },
-          }
-        })
-        endInningButton.textContent = 'Reset'
-        setMatchEnded(true)
+      if (ballCount !== 6) {
+        isMaidenOver = false
       }
+      const index = bowlers.findIndex((blr) => {
+        return blr.id === bowler.id
+      })
+      if (index !== -1) {
+        const existingBowler = bowlers[index]
+        const { maiden, wicket, noBall, wide, over } = existingBowler
+        const bowlerTotalOver = over + ballCount / 6
+        existingBowler.over = existingBowler.over + currentDisplayOver
+        existingBowler.maiden = isMaidenOver ? maiden + 1 : maiden
+        existingBowler.run = existingBowler.run + runsByOver
+        existingBowler.wicket = wicket + countWicket
+        existingBowler.noBall = noBall + countNoBall
+        existingBowler.wide = wide + countWide
+        existingBowler.economy = Math.round((existingBowler.run / bowlerTotalOver) * 100) / 100
+        bowlers[index] = existingBowler
+        setBowlers(bowlers)
+      } else {
+        if (ballCount !== 6) {
+          bowlers.push({
+            id: bowler.id,
+            name: bowler.name,
+            over: currentDisplayOver,
+            maiden: isMaidenOver ? 1 : 0,
+            run: runsByOver,
+            wicket: countWicket,
+            noBall: countNoBall,
+            wide: countWide,
+            economy: Math.round((runsByOver / (ballCount / 6)) * 100) / 100,
+          })
+          setBowlers(bowlers)
+        }
+      }
+    }
+    if (inningNo === 1) {
+      setMatch((state) => {
+        const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
+        const totalSixes = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
+        return {
+          ...state,
+          inning1: {
+            runs: totalRuns,
+            wickets: wicketCount,
+            runRate: crr,
+            overs: totalOvers,
+            four: totalFours,
+            six: totalSixes,
+            extra: extras,
+            batters,
+            bowlers,
+          },
+        }
+      })
+      setInningNo(2)
+      setCurrentRunStack([])
+      setTotalRuns(0)
+      setExtras({ total: 0, wide: 0, noBall: 0 })
+      setRunsByOver(0)
+      setWicketCount(0)
+      setTotalOvers(0)
+      setBallCount(0)
+      setOverCount(0)
+      setRecentOvers([])
+      setBatter1({})
+      setBatter2({})
+      setBatters([])
+      setBowlers([])
+      setBattingOrder(0)
+      setInputBowler('')
+      setBowler({})
+      setRemainingBalls(maxOver * 6)
+      setRemainingRuns(totalRuns + 1)
+      const bowlerNameElement = document.querySelector('.react-autosuggest__input')
+      bowlerNameElement.disabled = false
+      const batter1NameElement = document.getElementById('batter1Name')
+      batter1NameElement.value = ''
+      batter1NameElement.disabled = false
+      const batter2NameElement = document.getElementById('batter2Name')
+      batter2NameElement.value = ''
+      batter2NameElement.disabled = false
+      setStrikeValue('strike')
+      endInningButton.disabled = true
+    } else {
+      setMatch((state) => {
+        const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
+        const totalSixes = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
+        return {
+          ...state,
+          inning2: {
+            runs: totalRuns,
+            wickets: wicketCount,
+            runRate: crr,
+            overs: totalOvers,
+            four: totalFours,
+            six: totalSixes,
+            extra: extras,
+            batters,
+            bowlers,
+          },
+        }
+      })
+      endInningButton.textContent = 'Reset'
+      setMatchEnded(true)
     }
   }
   const handleBatter1Blur = (e) => {
@@ -999,9 +1007,8 @@ const ScoreBoard = () => {
   const inning2 = match.inning2
   const scoringTeam = batting === team1 ? team1 : team2
   const chessingTeam = scoringTeam === team1 ? team2 : team1
-  let winningMessage = `${inningNo === 1 ? scoringTeam : chessingTeam} needs ${remainingRuns} ${
-    remainingRuns <= 1 ? 'run' : 'runs'
-  } in ${remainingBalls} ${remainingBalls <= 1 ? 'ball' : 'balls'} to win`
+  let winningMessage = `${inningNo === 1 ? scoringTeam : chessingTeam} needs ${remainingRuns} ${remainingRuns <= 1 ? 'run' : 'runs'
+    } in ${remainingBalls} ${remainingBalls <= 1 ? 'ball' : 'balls'} to win`
   if (inningNo === 2) {
     var target = inning1.runs + 1
     if (wicketCount < 10 && overCount <= maxOver && totalRuns >= target) {
@@ -1495,5 +1502,3 @@ const ScoreBoard = () => {
     </div>
   )
 }
-
-export default ScoreBoard

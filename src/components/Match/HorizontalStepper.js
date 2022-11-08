@@ -12,7 +12,7 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import { Formik } from 'formik'
 import React from 'react'
-import { useNavigate,useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import * as Yup from 'yup'
 
 const useStyles = makeStyles((theme) => ({
@@ -119,7 +119,7 @@ const HorizontalStepper = () => {
               setSubmitting(true)
               const data = JSON.stringify(values)
               localStorage.setItem('data', data)
-              navigate('/match/score')
+              navigate('/match/score', { state: { ...match } })
               setSubmitting(false)
             }
           }}
