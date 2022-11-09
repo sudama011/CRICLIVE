@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import NotFound from './NotFound'
 import ScoreBoard from './ScoreBoard'
+import ScoreBoard2 from './ScoreBoard2'
 import StepperContainer from './StepperContainer'
 
 export default function Container() {
@@ -10,6 +11,7 @@ export default function Container() {
       <Routes>
         <Route exact path='/' element={<StepperContainer />} />
         <Route exact path='/score' element={<ScoreBoard />} />
+        <Route exact path='/live-score' element={<ScoreBoard2 />} />
         <Route path='/*' element={<NotFound />} />
       </Routes>
     </>

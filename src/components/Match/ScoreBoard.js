@@ -13,10 +13,10 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import Autosuggest from 'react-autosuggest'
 import { BATTING, OUT } from './constants/BattingStatus'
 import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
-import MathUtil from './util/MathUtil'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
 import { db } from '../../firebase';
+import { query,collection } from 'firebase/firestore';
 
 export default function ScoreBoard() {
   const tournamentDetails = useLocation().state;
@@ -61,6 +61,17 @@ export default function ScoreBoard() {
   const { batting, team1, team2 } = data
   const maxOver = parseInt(data.maxOver)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const q = query(collection(db, `tournaments/${tournament}/matches/${matchid}`))
+    // const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //   let arr = []
+    //   querySnapshot.forEach((t) => {
+    //     arr.push({ ...t.data() });
+    //   })
+    //   setTeams(arr);
+    // })
+  }, [])
 
   useEffect(() => {
     const endInningButton = document.getElementById('end-inning')
@@ -164,7 +175,7 @@ export default function ScoreBoard() {
     if (inningNo === 1) {
       setMatch((state) => {
         const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-        const totalSixes = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
+        const totalSixes = batters.map((batter) => batter.six).reduce((prev, next) => prev + next)
         return {
           ...state,
           inning1: {
@@ -212,7 +223,7 @@ export default function ScoreBoard() {
     } else {
       setMatch((state) => {
         const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-        const totalSixes = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
+        const totalSixes = batters.map((batter) => batter.six).reduce((prev, next) => prev + next)
         return {
           ...state,
           inning2: {
@@ -234,8 +245,6 @@ export default function ScoreBoard() {
   }
   const handleBatter1Blur = (e) => {
     let name = e.target.value
-    name = name.charAt(0).toUpperCase() + name.slice(1)
-    e.target.value = name
     e.target.disabled = true
     if (isBatter1Edited) {
       setBatter1((state) => ({
@@ -244,9 +253,7 @@ export default function ScoreBoard() {
       }))
       setBatter1Edited(false)
     } else {
-      const randomNo = MathUtil.getRandomNo()
       setBatter1({
-        id: name + randomNo,
         name: name,
         run: 0,
         ball: 0,
@@ -262,8 +269,6 @@ export default function ScoreBoard() {
   }
   const handleBatter2Blur = (e) => {
     let name = e.target.value
-    name = name.charAt(0).toUpperCase() + name.slice(1)
-    e.target.value = name
     e.target.disabled = true
     if (isBatter2Edited) {
       setBatter2((state) => ({
@@ -272,9 +277,7 @@ export default function ScoreBoard() {
       }))
       setBatter2Edited(false)
     } else {
-      const randomNo = MathUtil.getRandomNo()
       setBatter2({
-        id: name + randomNo,
         name: name,
         run: 0,
         ball: 0,
@@ -291,7 +294,6 @@ export default function ScoreBoard() {
   const handleBowlerBlur = (e) => {
     let name = e.target.value
     if (name !== '') {
-      name = name.charAt(0).toUpperCase() + name.slice(1)
       setInputBowler(name)
       e.target.value = name
       e.target.disabled = true
@@ -305,10 +307,7 @@ export default function ScoreBoard() {
         if (hasNameSuggested) {
           setNameSuggested(false)
         } else {
-          const randomNo = MathUtil.getRandomNo()
-          const id = name + randomNo
           setBowler({
-            id,
             name,
           })
         }
@@ -322,7 +321,6 @@ export default function ScoreBoard() {
   }
   const getSuggestionValue = (suggestion) => {
     setBowler({
-      id: suggestion.id,
       name: suggestion.name,
     })
     setNameSuggested(true)
@@ -391,7 +389,6 @@ export default function ScoreBoard() {
       setBowlers((state) => [
         ...state,
         {
-          id: bowler.id,
           name: bowler.name,
           over: 1,
           maiden: isMaidenOver ? 1 : 0,
@@ -408,11 +405,10 @@ export default function ScoreBoard() {
     const batter1NameElement = document.getElementById('batter1Name')
     batter1NameElement.value = ''
     batter1NameElement.disabled = false
-    const { id, name, run, ball, four, six, strikeRate, onStrike } = batter1
+    const { name, run, ball, four, six, strikeRate, onStrike } = batter1
     setBatters((state) => [
       ...state,
       {
-        id,
         name,
         run,
         ball,
@@ -430,11 +426,10 @@ export default function ScoreBoard() {
     const batter2NameElement = document.getElementById('batter2Name')
     batter2NameElement.value = ''
     batter2NameElement.disabled = false
-    const { id, name, run, ball, four, six, strikeRate, onStrike } = batter2
+    const { name, run, ball, four, six, strikeRate, onStrike } = batter2
     setBatters((state) => [
       ...state,
       {
-        id,
         name,
         run,
         ball,
@@ -476,13 +471,12 @@ export default function ScoreBoard() {
     }
     setWicketCount(wicketCount - 1)
     const batter = batters[batters.length - 1]
-    const { id, name, run, ball, four, six, strikeRate, onStrike } = batter
+    const { name, run, ball, four, six, strikeRate, onStrike } = batter
     if (batter1.name === undefined || batter1.onStrike) {
       const batter1NameElement = document.getElementById('batter1Name')
       batter1NameElement.value = batter.name
       batter1NameElement.disabled = true
       setBatter1({
-        id,
         name,
         run,
         ball,
@@ -505,7 +499,6 @@ export default function ScoreBoard() {
       batter2NameElement.value = batter.name
       batter2NameElement.disabled = true
       setBatter2({
-        id,
         name,
         run,
         ball,
