@@ -16,14 +16,13 @@ import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
 import { db } from '../../firebase';
-import { query, collection, onSnapshot, where } from 'firebase/firestore';
+import { updateDoc, doc, getDoc } from 'firebase/firestore';
 
 export default function ScoreBoard() {
+  const navigate = useNavigate()
   const tournamentDetails = useLocation().state;
   const tournament = tournamentDetails.tournament;
   const matchid = tournamentDetails.matchid;
-  const t1 = tournamentDetails.team1;
-  const t2 = tournamentDetails.team2;
 
   const [inningNo, setInningNo] = useState(1)
   const [match, setMatch] = useState({ inning1: { batters: [], bowlers: [] }, inning2: { batters: [], bowlers: [] } })
@@ -59,15 +58,35 @@ export default function ScoreBoard() {
 
   let data = JSON.parse(localStorage.getItem('data'))
   const { batting, team1, team2 } = data
-  const maxOver = parseInt(data.maxOver)
-  const navigate = useNavigate()
+  let maxOver = parseInt(data.maxOver)
 
   useEffect(() => {
-    const q = query(collection(db, `tournaments/${tournament}/matches`),
-      where('id', '==', `${matchid}`));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-
-    })
+    const task = async () => {
+      try {
+        const docRef = doc(db, `tournaments/${tournament}/matches`, matchid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const arr = docSnap.data();
+          setInningNo(arr.inningNo);
+          setMatch(arr.match);
+          setCurrentRunStack(arr.currentRunStack);
+          setTotalRuns(arr.totalRuns);
+          setExtras(arr.extras);
+          setWicketCount(arr.wicketCount);
+          setTotalOvers(arr.totalOvers);
+          setOverCount(arr.overCount);
+          setRecentOvers(arr.recentOvers);
+          setBatter1(arr.batter1);
+          setBatter2(arr.batter2);
+          setBowler(arr.bowler);
+          setStrikeValue(arr.strikeValue);
+          setMatchEnded(arr.hasMatchEnded);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    task();
   }, []);
 
   useEffect(() => {
@@ -990,13 +1009,13 @@ export default function ScoreBoard() {
   }
   let rrr = (remainingRuns / (remainingBalls / 6)).toFixed(2)
   rrr = isFinite(rrr) ? rrr : 0
-  const overs = overCount + ballCount / 6
+  let overs = overCount + ballCount / 6
   let crr = (totalRuns / overs).toFixed(2)
   crr = isFinite(crr) ? crr : 0
-  const inning1 = match.inning1
-  const inning2 = match.inning2
-  const scoringTeam = batting === team1 ? team1 : team2
-  const chessingTeam = scoringTeam === team1 ? team2 : team1
+  let inning1 = match.inning1
+  let inning2 = match.inning2
+  let scoringTeam = batting === team1 ? team1 : team2
+  let chessingTeam = scoringTeam === team1 ? team2 : team1
   let winningMessage = `${inningNo === 1 ? scoringTeam : chessingTeam} needs ${remainingRuns} ${remainingRuns <= 1 ? 'run' : 'runs'
     } in ${remainingBalls} ${remainingBalls <= 1 ? 'ball' : 'balls'} to win`
   if (inningNo === 2) {
@@ -1014,13 +1033,36 @@ export default function ScoreBoard() {
       endMatch()
     }
   }
-  useEffect(() => {
-    const q = query(collection(db, `tournaments/${tournament}/matches`),
-      where('id', '==', `${matchid}`));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
 
+
+  useEffect(() => {
+    const matchDoc = doc(db, `tournaments/${tournament}/matches`, matchid);
+
+    updateDoc(matchDoc, {
+      inningNo,
+      match,
+      currentRunStack,
+      totalRuns,
+      extras,
+      wicketCount,
+      totalOvers,
+      overCount,
+      recentOvers,
+      batter1,
+      batter2,
+      bowler,
+      strikeValue,
+      hasMatchEnded,
+      maxOver,
+      scoringTeam,
+      chessingTeam,
+      winningMessage,
+      crr: crr,
+      rrr: rrr,
     });
-  }, []);
+
+  }, [ballCount, extras, batter1, batter2, bowler, hasMatchEnded]);
+
 
   const welcomeContent = (
     <>

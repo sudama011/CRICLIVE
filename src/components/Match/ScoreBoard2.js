@@ -24,31 +24,69 @@ export default function ScoreBoard2() {
     const [bowler, setBowler] = useState({})
     const [strikeValue, setStrikeValue] = React.useState('strike')
     const [hasMatchEnded, setMatchEnded] = useState(false)
-    const team1 = "";
-    const team2 = "";
-    const maxOver = 0;
-    const scoringTeam = "";
-    const chessingTeam = "";
-    const winningMessage = "";
-    const rrr = 0;
-    const crr = 0;
-    let target = undefined;
+    const [maxOver, setMaxOver] = useState(1)
+    const [scoringTeam, setScoringTeam] = useState('')
+    const [chessingTeam, setChessingTeam] = useState(1)
+    const [winningMessage, setWinningMessage] = useState(1)
+
+    const [team1, setTeam1] = useState('')
+    const [team2, setTeam2] = useState('')
+    const [rrr, setRrr] = useState(0)
+    const [crr, setCrr] = useState(0)
 
     useEffect(() => {
-        const q = query(collection(db, `tournaments/${tournament}/matches`),
-            where('id', '==', `${matchid}`));
-        
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            console.log(querySnapshot)
-        })
+
+        const task = async () => {
+            try {
+                const q = query(collection(db, `tournaments/${tournament}/matches`),
+                    where('id', '==', `${matchid}`));
+                const unsubscribe = await onSnapshot(q, (querySnapshot) => {
+                    let arr = []
+                    querySnapshot.forEach((t) => {
+                        arr.push({ ...t.data() });
+                    });
+                    setInningNo(arr[0].inningNo);
+                    setMatch(arr[0].match);
+                    setCurrentRunStack(arr[0].currentRunStack);
+                    setTotalRuns(arr[0].totalRuns);
+                    setExtras(arr[0].extras);
+                    setWicketCount(arr[0].wicketCount);
+                    setTotalOvers(arr[0].totalOvers);
+                    setOverCount(arr[0].overCount);
+                    setRecentOvers(arr[0].recentOvers);
+                    setBatter1(arr[0].batter1);
+                    setBatter2(arr[0].batter2);
+                    setBowler(arr[0].bowler);
+                    setStrikeValue(arr[0].strikeValue);
+                    setMatchEnded(arr[0].hasMatchEnded);
+                    setMaxOver(arr[0].maxOver);
+                    setScoringTeam(arr[0].scoringTeam);
+                    setChessingTeam(arr[0].chessingTeam);
+                    setWinningMessage(arr[0].winningMessage);
+
+                    setTeam1(arr[0].team1);
+                    setTeam2(arr[0].team2);
+                    setRrr(arr[0].rrr);
+                    setCrr(arr[0].crr);
+
+                    if (winningMessage === 'Match Tied') {
+                        unsubscribe();
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        task();
+
     }, []);
 
 
-    
+
     const inning1 = match.inning1
     const inning2 = match.inning2
-    
 
+    var target = inning1.runs ? inning1.runs + 1 : 0;
     const welcomeContent = (
         <>
             <div></div>
@@ -66,7 +104,7 @@ export default function ScoreBoard2() {
         <>
             <div>Target: {target}</div>
             <div>{winningMessage}</div>
-            <div>RRR: {rrr}</div>
+            {hasMatchEnded ? <div></div> : <div>RRR: {rrr}</div>}
         </>
     )
 
