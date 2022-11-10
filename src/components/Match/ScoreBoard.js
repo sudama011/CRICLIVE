@@ -16,7 +16,7 @@ import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
 import { db } from '../../firebase';
-import { query,collection } from 'firebase/firestore';
+import { query, collection, onSnapshot, where } from 'firebase/firestore';
 
 export default function ScoreBoard() {
   const tournamentDetails = useLocation().state;
@@ -63,15 +63,12 @@ export default function ScoreBoard() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const q = query(collection(db, `tournaments/${tournament}/matches/${matchid}`))
-    // const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    //   let arr = []
-    //   querySnapshot.forEach((t) => {
-    //     arr.push({ ...t.data() });
-    //   })
-    //   setTeams(arr);
-    // })
-  }, [])
+    const q = query(collection(db, `tournaments/${tournament}/matches`),
+      where('id', '==', `${matchid}`));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+
+    })
+  }, []);
 
   useEffect(() => {
     const endInningButton = document.getElementById('end-inning')
@@ -1017,6 +1014,14 @@ export default function ScoreBoard() {
       endMatch()
     }
   }
+  useEffect(() => {
+    const q = query(collection(db, `tournaments/${tournament}/matches`),
+      where('id', '==', `${matchid}`));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+
+    });
+  }, []);
+
   const welcomeContent = (
     <>
       <div></div>

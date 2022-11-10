@@ -17,51 +17,38 @@ export default function ScoreBoard2() {
     const [extras, setExtras] = useState({ total: 0, wide: 0, noBall: 0 })
     const [wicketCount, setWicketCount] = useState(0)
     const [totalOvers, setTotalOvers] = useState(0)
-    const [ballCount, setBallCount] = useState(0)
     const [overCount, setOverCount] = useState(0)
     const [recentOvers, setRecentOvers] = useState([])
     const [batter1, setBatter1] = useState({})
     const [batter2, setBatter2] = useState({})
     const [bowler, setBowler] = useState({})
-    const [remainingBalls, setRemainingBalls] = useState(0)
-    const [remainingRuns, setRemainingRuns] = useState(0)
     const [strikeValue, setStrikeValue] = React.useState('strike')
     const [hasMatchEnded, setMatchEnded] = useState(false)
-    const { batting, team1, team2 } = { batting: 'team1', team1: 'team1', team2: 'team2' }
-    const maxOver = 2;
+    const team1 = "";
+    const team2 = "";
+    const maxOver = 0;
+    const scoringTeam = "";
+    const chessingTeam = "";
+    const winningMessage = "";
+    const rrr = 0;
+    const crr = 0;
+    let target = undefined;
 
     useEffect(() => {
         const q = query(collection(db, `tournaments/${tournament}/matches`),
-            where('id', '==', `${matchid}`))
+            where('id', '==', `${matchid}`));
+        
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             console.log(querySnapshot)
         })
-    }, [])
+    }, []);
 
 
-    let rrr = (remainingRuns / (remainingBalls / 6)).toFixed(2)
-    rrr = isFinite(rrr) ? rrr : 0
-    const overs = overCount + ballCount / 6
-    let crr = (totalRuns / overs).toFixed(2)
-    crr = isFinite(crr) ? crr : 0
+    
     const inning1 = match.inning1
     const inning2 = match.inning2
-    const scoringTeam = batting === team1 ? team1 : team2
-    const chessingTeam = scoringTeam === team1 ? team2 : team1
-    let winningMessage = `${inningNo === 1 ? scoringTeam : chessingTeam} needs ${remainingRuns} ${remainingRuns <= 1 ? 'run' : 'runs'
-        } in ${remainingBalls} ${remainingBalls <= 1 ? 'ball' : 'balls'} to win`
-    if (inningNo === 2) {
-        var target = inning1.runs + 1
-        if (wicketCount < 10 && overCount <= maxOver && totalRuns >= target) {
-            winningMessage = `${chessingTeam} won by ${10 - wicketCount} wickets`
-        }
-        if ((wicketCount >= 10 || overCount >= maxOver) && totalRuns < target - 1) {
-            winningMessage = `${scoringTeam} won by ${target - totalRuns - 1} runs`
-        }
-        if (wicketCount < 10 && overCount === maxOver && totalRuns === target - 1) {
-            winningMessage = 'Match Tied'
-        }
-    }
+    
+
     const welcomeContent = (
         <>
             <div></div>
@@ -73,14 +60,13 @@ export default function ScoreBoard2() {
         <>
             {overCount === maxOver && <div>1st inning completed</div>}
             {wicketCount === 10 && <div>All Out</div>}
-            <div>Please click "End Inning" button</div>
         </>
     )
     const remainingRunsContent = (
         <>
             <div>Target: {target}</div>
             <div>{winningMessage}</div>
-            <div>RRR: {isNaN(rrr) ? 0 : rrr}</div>
+            <div>RRR: {rrr}</div>
         </>
     )
 
