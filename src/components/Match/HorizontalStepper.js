@@ -62,6 +62,8 @@ const useStyles = makeStyles((theme) => ({
 }))
 const HorizontalStepper = () => {
   const match = useLocation().state;
+  const tournament = match.tournament;
+  const matchid = match.matchid;
 
   const navigate = useNavigate()
   const classes = useStyles()
@@ -78,7 +80,7 @@ const HorizontalStepper = () => {
   const initialValues = {
     team1: match.team1,
     team2: match.team2,
-    maxOver: '',
+    maxOver: 4,
     batting: '',
   }
   const validationSchema = [
@@ -117,8 +119,10 @@ const HorizontalStepper = () => {
             actions.setSubmitting(false)
             if (isLastStep()) {
               setSubmitting(true)
-              const data = JSON.stringify(values)
-              localStorage.setItem('data', data)
+
+              localStorage.setItem(`tournament_${tournament}_match_${matchid}`,
+                JSON.stringify(values));
+              
               navigate('/match/score', { state: { ...match } })
               setSubmitting(false)
             }
@@ -170,6 +174,7 @@ const HorizontalStepper = () => {
                         <Typography className={classes.teamNameHeading}>How many overs?</Typography>
                         <div className={classes.formGroup}>
                           <TextField
+                            type="number"
                             id='maxOver'
                             name='maxOver'
                             label='Overs*'

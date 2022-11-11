@@ -69,9 +69,9 @@ export default function ScoreBoard2() {
                     setRrr(arr[0].rrr);
                     setCrr(arr[0].crr);
 
-                    if (winningMessage === 'Match Tied') {
-                        unsubscribe();
-                    }
+                    // if (winningMessage === 'Match Tied') {
+                    //     unsubscribe();
+                    // }
                 });
             } catch (err) {
                 console.error(err);
