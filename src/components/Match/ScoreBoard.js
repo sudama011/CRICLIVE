@@ -10,21 +10,54 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import Autosuggest from 'react-autosuggest'
 import { BATTING, OUT } from './constants/BattingStatus'
 import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
 import { db } from '../../firebase';
-import { updateDoc, doc } from 'firebase/firestore';
+import { updateDoc, doc, query, collection, onSnapshot } from 'firebase/firestore';
 
 export default function ScoreBoard() {
-  const [isLocalStorageLoaded, setIsLocalStorageLoaded] = useState(false);
   const navigate = useNavigate()
   const tournamentDetails = useLocation().state;
   const tournament = tournamentDetails.tournament;
   const matchid = tournamentDetails.matchid;
+  const T1 = tournamentDetails.team1;
+  const T2 = tournamentDetails.team2;
 
+  const [playerListOfTeam1, setPlayerListOfTeam1] = useState([])
+  const [playerListOfTeam2, setPlayerListOfTeam2] = useState([])
+  useEffect(() => {
+    const task = async () => {
+      try {
+
+        const q1 = query(collection(db, `tournaments/${tournament}/teams/${T1}/players`));
+        const q2 = query(collection(db, `tournaments/${tournament}/teams/${T2}/players`));
+
+        onSnapshot(q1, (querySnapshot) => {
+          let arr = []
+          querySnapshot.forEach((t) => {
+            arr.push(t.data().name);
+          })
+          setPlayerListOfTeam1(arr);
+        })
+
+        onSnapshot(q2, (querySnapshot) => {
+          let arr = []
+          querySnapshot.forEach((t) => {
+            arr.push(t.data().name);
+          })
+          setPlayerListOfTeam2(arr);
+        })
+
+      } catch (e) {
+
+      }
+    }
+    task()
+  }, []);
+
+  const [isLocalStorageLoaded, setIsLocalStorageLoaded] = useState(false);
   const [inningNo, setInningNo] = useState(1)
   const [match, setMatch] = useState({ inning1: { batters: [], bowlers: [] }, inning2: { batters: [], bowlers: [] } })
   const [currentRunStack, setCurrentRunStack] = useState([])
@@ -45,7 +78,6 @@ export default function ScoreBoard() {
   const [isBowlerEdited, setBowlerEdited] = useState(false)
   const [bowler, setBowler] = useState({})
   const [bowlers, setBowlers] = useState([])
-  const [inputBowler, setInputBowler] = useState('')
   const [isModalOpen, setModalOpen] = React.useState(false)
   const [outType, setOutType] = React.useState('')
   const [runOutPlayerName, setRunOutPlayerName] = React.useState('')
@@ -53,14 +85,11 @@ export default function ScoreBoard() {
   const [remainingRuns, setRemainingRuns] = useState(0)
   const [strikeValue, setStrikeValue] = React.useState('strike')
   const [isNoBall, setNoBall] = useState(false)
-  const [suggestions, setSuggestions] = useState([])
-  const [hasNameSuggested, setNameSuggested] = useState(false)
   const [hasMatchEnded, setMatchEnded] = useState(false)
   const [batting, setBatting] = useState('')
   const [team1, setTeam1] = useState('')
   const [team2, setTeam2] = useState('')
   const [maxOver, setMaxOver] = useState(1)
-
 
   // fetch data from localStorage
   useEffect(() => {
@@ -90,15 +119,13 @@ export default function ScoreBoard() {
           if (data.isBowlerEdited) await setBowlerEdited(data.isBowlerEdited);
           if (data.bowler) await setBowler(data.bowler);
           if (data.bowlers) await setBowlers(data.bowlers);
-          if (data.inputBowler) await setInputBowler(data.inputBowler);
           if (data.isModalOpen) await setModalOpen(data.isModalOpen);
           if (data.outType) await setOutType(data.outType);
           if (data.runOutPlayerName) await setRunOutPlayerName(data.runOutPlayerName);
           if (data.remainingBalls) await setRemainingBalls(data.remainingBalls);
           if (data.remainingRuns) await setRemainingRuns(data.remainingRuns);
           if (data.strikeValue) await setStrikeValue(data.strikeValue);
-          if (data.isNoBall) await setNameSuggested(data.isNoBall);
-          if (data.hasNameSuggested) await setNameSuggested(data.hasNameSuggested);
+          if (data.isNoBall) await setNoBall(data.isNoBall);
           if (data.hasMatchEnded) await setMatchEnded(data.hasMatchEnded);
 
           if (data.maxOver) await setMaxOver(data.maxOver);
@@ -115,9 +142,10 @@ export default function ScoreBoard() {
             document.getElementById('batter2Name').disabled = true
           }
           if (data.bowler && data.bowler.name) {
-            document.querySelector('.react-autosuggest__input').disabled = true
+            document.getElementById('bowlerName').disabled = true
           }
-          setIsLocalStorageLoaded(true);
+          if (data.maxOver)
+            setIsLocalStorageLoaded(true);
         }
       } catch (err) {
         console.error(err);
@@ -153,15 +181,12 @@ export default function ScoreBoard() {
           isBatter1Edited,
           isBatter2Edited,
           bowlers,
-          inputBowler,
           isModalOpen,
           outType,
           runOutPlayerName,
           remainingBalls,
           remainingRuns,
           isNoBall,
-          suggestions,
-          hasNameSuggested,
 
           batting,
           team1,
@@ -302,11 +327,10 @@ export default function ScoreBoard() {
       setBatters([])
       setBowlers([])
       setBattingOrder(0)
-      setInputBowler('')
       setBowler({})
       setRemainingBalls(maxOver * 6)
       setRemainingRuns(totalRuns + 1)
-      const bowlerNameElement = document.querySelector('.react-autosuggest__input')
+      const bowlerNameElement = document.getElementById('bowlerName')
       bowlerNameElement.disabled = false
       const batter1NameElement = document.getElementById('batter1Name')
       batter1NameElement.value = ''
@@ -340,6 +364,7 @@ export default function ScoreBoard() {
       })
       endInningButton.textContent = 'Reset'
       setMatchEnded(true)
+      localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
     }
   }
 
@@ -352,7 +377,7 @@ export default function ScoreBoard() {
           totalFours += b.four
           totalSixes += b.six
         })
-        
+
 
         return {
           ...state,
@@ -445,49 +470,25 @@ export default function ScoreBoard() {
   }
   const handleBowlerBlur = (e) => {
     let name = e.target.value
-    if (name !== '') {
-      setInputBowler(name)
-      e.target.value = name
-      e.target.disabled = true
-      if (isBowlerEdited) {
-        setBowler((state) => ({
-          ...state,
-          name: name,
-        }))
-        setBowlerEdited(false)
-      } else {
-        if (hasNameSuggested) {
-          setNameSuggested(false)
-        } else {
-          setBowler({
-            name,
-          })
-        }
-      }
+
+    e.target.disabled = true
+    if (isBowlerEdited) {
+      setBowler((state) => ({
+        ...state,
+        name: name,
+      }))
+      setBowlerEdited(false)
+    } else {
+
+      setBowler({
+        name,
+      })
     }
   }
-  const onSuggestionsFetchRequested = (param) => {
-    const inputValue = param.value.trim().toLowerCase()
-    const suggestionArr = inputValue.length === 0 ? [] : bowlers.filter((bowlerObj) => bowlerObj.name.toLowerCase().includes(inputValue))
-    setSuggestions(suggestionArr)
-  }
-  const getSuggestionValue = (suggestion) => {
-    setBowler({
-      name: suggestion.name,
-    })
-    setNameSuggested(true)
-    return suggestion.name
-  }
-  const inputProps = {
-    value: inputBowler,
-    onChange: (e, { newValue }) => {
-      setInputBowler(newValue)
-    },
-    onBlur: handleBowlerBlur,
-  }
+
 
   const overCompleted = (runsByOverParam, currentRunStackParam) => {
-    const bowlerNameElement = document.querySelector('.react-autosuggest__input')
+    const bowlerNameElement = document.getElementById('bowlerName')
     if (overCount + 1 === maxOver) {
       const endInningButton = document.getElementById('end-inning')
       endInningButton.disabled = false
@@ -499,7 +500,6 @@ export default function ScoreBoard() {
       ...state,
       { overNo: overCount + 1, bowler: bowler.name, runs: runsByOverParam, stack: currentRunStackParam },
     ])
-    setInputBowler('')
     setBowler({})
     setCurrentRunStack([])
     setRunsByOver(0)
@@ -615,7 +615,7 @@ export default function ScoreBoard() {
   }
   const editBowlerName = () => {
     if (overCount !== maxOver && wicketCount !== 10 && !hasMatchEnded) {
-      const bowlerNameElement = document.querySelector('.react-autosuggest__input')
+      const bowlerNameElement = document.getElementById('bowlerName');
       bowlerNameElement.disabled = false
       setBowlerEdited(true)
     }
@@ -1016,8 +1016,9 @@ export default function ScoreBoard() {
       }))
     }
   }
-  const handleWicket = (isRunOut, playerId) => {
+  const handleWicket = (isRunOut, playerName) => {
     setRunOutPlayerName('')
+    setRemainingBalls(remainingBalls - 1)
     if (ballCount === 5) {
       if (isNoBall) {
         removeNoBallEffect()
@@ -1055,7 +1056,7 @@ export default function ScoreBoard() {
       }
     }
     if (isRunOut) {
-      if (batter1.name === playerId) {
+      if (batter1.name === playerName) {
         newBatter1()
         changeStrikeRadio('strike')
         switchBatterStrike('batter1')
@@ -1077,25 +1078,24 @@ export default function ScoreBoard() {
       if (isRunOut && wicketCount + 1 === 10) {
         const endInningButton = document.getElementById('end-inning')
         endInningButton.disabled = false
-        const bowlerNameElement = document.querySelector('.react-autosuggest__input')
+        const bowlerNameElement = document.getElementById('bowlerName')
         bowlerNameElement.disabled = true
         const batter1NameElement = document.getElementById('batter1Name')
         batter1NameElement.disabled = true
         const batter2NameElement = document.getElementById('batter2Name')
         batter2NameElement.disabled = true
-        setInputBowler('')
+
       }
     } else {
       if (wicketCount + 1 === 10) {
         const endInningButton = document.getElementById('end-inning')
         endInningButton.disabled = false
-        const bowlerNameElement = document.querySelector('.react-autosuggest__input')
+        const bowlerNameElement = document.getElementById('bowlerName')
         bowlerNameElement.disabled = true
         const batter1NameElement = document.getElementById('batter1Name')
         batter1NameElement.disabled = true
         const batter2NameElement = document.getElementById('batter2Name')
         batter2NameElement.disabled = true
-        setInputBowler('')
       }
     }
   }
@@ -1124,10 +1124,10 @@ export default function ScoreBoard() {
     }
   }
   const handleRunOutPlayerChange = (e) => {
-    const playerId = e.target.value
+    const playerName = e.target.value
     const runOutPlayerErrorElement = document.getElementById('run-out-player-error')
     runOutPlayerErrorElement.classList.add('hide')
-    setRunOutPlayerName(playerId)
+    setRunOutPlayerName(playerName)
   }
   const endMatch = () => {
     disableAllScoreButtons()
@@ -1148,7 +1148,7 @@ export default function ScoreBoard() {
       scoreTypesButtons[i].disabled = false
     }
   }
-  if (batter1.name !== undefined && batter2.name !== undefined && inputBowler !== '') {
+  if (batter1.name !== undefined && batter2.name !== undefined) {
     enableAllScoreButtons()
   }
   let rrr = (remainingRuns / (remainingBalls / 6)).toFixed(2)
@@ -1160,9 +1160,16 @@ export default function ScoreBoard() {
   let inning2 = match.inning2
   let scoringTeam = batting === team1 ? team1 : team2
   let chessingTeam = scoringTeam === team1 ? team2 : team1
-  let winningMessage = `${inningNo === 1 ? scoringTeam : chessingTeam} needs ${remainingRuns} ${remainingRuns <= 1 ? 'run' : 'runs'
-    } in ${remainingBalls} ${remainingBalls <= 1 ? 'ball' : 'balls'} to win`
+  let winningMessage = ""
+  if (inningNo === 1) {
+    winningMessage = `${scoringTeam} : ${totalRuns}/${wicketCount} (${totalOvers})`
+  }
+
   if (inningNo === 2) {
+
+    winningMessage = `${chessingTeam} needs ${remainingRuns} ${remainingRuns <= 1 ? 'run' : 'runs'
+      } in ${remainingBalls} ${remainingBalls <= 1 ? 'ball' : 'balls'} to win`
+
     var target = inning1.runs + 1
     if (wicketCount < 10 && overCount <= maxOver && totalRuns >= target) {
       winningMessage = `${chessingTeam} won by ${10 - wicketCount} wickets`
@@ -1383,7 +1390,18 @@ export default function ScoreBoard() {
                       style={{ padding: '0 4px 0 2px' }}
                     />
                   </span>
-                  <input type='text' id='batter1Name' className='batter-name' onBlur={handleBatter1Blur} />
+
+                  <select id='batter1Name' className='batter-name' onBlur={handleBatter1Blur}>
+                    {((inningNo === 1 && team1 === scoringTeam) || (inningNo === 2 && team1 === chessingTeam)) ?
+                      playerListOfTeam1.map((p1, i) => (
+                        <option key={i} value={p1}>{p1}</option>
+                      ))
+                      :
+                      playerListOfTeam2.map((p1, i) => (
+                        <option key={i} value={p1}>{p1}</option>
+                      ))
+                    }
+                  </select>
                   <IconButton color='primary' className='icon-button' onClick={editBatter1Name}>
                     <EditIcon className='icon-size' />
                   </IconButton>
@@ -1406,7 +1424,17 @@ export default function ScoreBoard() {
                       style={{ padding: '0 4px 0 2px' }}
                     />
                   </span>
-                  <input type='text' id='batter2Name' className='batter-name' onBlur={handleBatter2Blur} />
+                  <select id='batter2Name' className='batter-name' onBlur={handleBatter2Blur}>
+                    {((inningNo === 1 && team1 === scoringTeam) || (inningNo === 2 && team1 === chessingTeam)) ?
+                      playerListOfTeam1.map((p1, i) => (
+                        <option key={i} value={p1}>{p1}</option>
+                      ))
+                      :
+                      playerListOfTeam2.map((p1, i) => (
+                        <option key={i} value={p1}>{p1}</option>
+                      ))
+                    }
+                  </select>
                   <IconButton color='primary' className='icon-button' onClick={editBatter2Name}>
                     <EditIcon className='icon-size' />
                   </IconButton>
@@ -1421,17 +1449,17 @@ export default function ScoreBoard() {
         </div>
         <div className='bowler-container'>
           <div className='bowler'>
-            Bowler:
-            <Autosuggest
-              suggestions={suggestions}
-              onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-              onSuggestionsClearRequested={() => {
-                setSuggestions([])
-              }}
-              getSuggestionValue={getSuggestionValue}
-              renderSuggestion={(suggestion) => <div>{suggestion.name}</div>}
-              inputProps={inputProps}
-            />
+            Bowler:<select id='bowlerName' className='bowler-name' onBlur={handleBowlerBlur}>
+              {((inningNo === 1 && team1 === scoringTeam) || (inningNo === 2 && team1 === chessingTeam)) ?
+                playerListOfTeam2.map((p1, i) => (
+                  <option key={i} value={p1}>{p1}</option>
+                ))
+                :
+                playerListOfTeam2.map((p1, i) => (
+                  <option key={i} value={p1}>{p1}</option>
+                ))
+              }
+            </select>
             <IconButton color='primary' className='icon-button' onClick={editBowlerName}>
               <EditIcon className='icon-size' />
             </IconButton>

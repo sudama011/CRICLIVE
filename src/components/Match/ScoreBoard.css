@@ -81,46 +81,7 @@ table thead {
   background-color: #3f51b517;
   padding: 8px;
 }
-.react-autosuggest__container {
-  padding-left: 4px;
-  position: relative;
-}
-.react-autosuggest__input {
-  max-width: 6.5rem;
-}
-.react-autosuggest__input--focused {
-  outline: none;
-}
-.react-autosuggest__input--open {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.react-autosuggest__suggestions-container {
-  display: none;
-}
-.react-autosuggest__suggestions-container--open {
-  display: block;
-  position: absolute;
-  top: 1.3rem;
-  width: 6.85rem;
-  border: 1px solid #808080;
-  background-color: #fff;
-  font-weight: 400;
-  font-size: 0.8rem;
-  z-index: 2;
-}
-.react-autosuggest__suggestions-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-.react-autosuggest__suggestion {
-  cursor: pointer;
-  padding: 4px;
-}
-.react-autosuggest__suggestion--highlighted {
-  background-color: #ddd;
-}
+
 .bowler-runs {
   display: flex;
   align-items: center;
@@ -166,9 +127,7 @@ table thead {
 .strike-icon-button {
   padding: 0 !important;
 }
-.batter-name {
-  max-width: 6.5rem;
-}
+
 .extras-container {
   margin: 0.8rem 0;
   display: flex;

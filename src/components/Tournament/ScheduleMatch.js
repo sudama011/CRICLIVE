@@ -32,7 +32,7 @@ export default function ScheduleMatch() {
         team2: team2.current.value,
         date: date.current.value,
         time: time.current.value,
-        winner: '-'
+        winningMessage: 'Match is not started yet'
       }
       await setDoc(doc(db, `tournaments/${tournament}/matches`, values.id), values);
 

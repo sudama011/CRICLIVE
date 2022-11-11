@@ -95,21 +95,21 @@ export default function Tournament() {
         <td>
           {
             user.uid ?
-            <Link to='/match' state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
-              <button type="button" className="btn btn-info">{t.id}</button>
-              </Link> 
+              <Link to={t.hasMatchEnded ? '/match/live-score' : t.maxOver ? '/match/score' : '/match'} state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
+                <button type="button" className="btn btn-info">{t.id}</button>
+              </Link>
               :
               <Link to='/match/live-score' state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
                 <button type="button" className="btn btn-info">{t.id}</button>
               </Link>
           }
-          
+
         </td>
         <td> {t.team1}</td>
         <td> {t.team2}</td>
         <td> {t.date} </td>
         <td> {t.time}</td>
-        <td> {t.winner} </td>
+        <td> {t.winningMessage} </td>
       </tr >
     );
   }
@@ -167,7 +167,7 @@ export default function Tournament() {
                   <th>Team2</th>
                   <th>Date</th>
                   <th>Time</th>
-                  <th>Winner</th>
+                  <th>Status</th>
                 </tr>
               </thead>
 
@@ -192,7 +192,7 @@ export default function Tournament() {
                   <th>Team2</th>
                   <th>Date</th>
                   <th>Time</th>
-                  <th>Winner</th>
+                  <th>Status</th>
                 </tr>
               </thead>
 
@@ -215,7 +215,7 @@ export default function Tournament() {
                   <th>Team2</th>
                   <th>Date</th>
                   <th>Time</th>
-                  <th>Winner</th>
+                  <th>Status</th>
                 </tr>
               </thead>
 

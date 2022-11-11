@@ -68,10 +68,13 @@ export default function ScoreBoard2() {
                     setTeam2(arr[0].team2);
                     setRrr(arr[0].rrr);
                     setCrr(arr[0].crr);
-
-                    // if (winningMessage === 'Match Tied') {
-                    //     unsubscribe();
-                    // }
+                    
+                    setTimeout(() => {
+                        if (hasMatchEnded || winningMessage === 'Match Tied' || winningMessage === 'Match is not started yet') {
+                            unsubscribe();
+                        } 
+                    },1000)
+                    
                 });
             } catch (err) {
                 console.error(err);
