@@ -6,11 +6,10 @@ export function Player({ Batting, Bowling }) {
     <>
       <br />
       <br />
-      <ul className='list-group'>
-        <li className="list-group-item list-group-item-primary p-1">
+      <ul className='list-group' >
+        <li className="list-group-item list-group-item-success p-1" style={{ overflowX: "scroll" }}>
           <h3>Batting Stats :</h3>
-          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2">
+            <table className="table">
               <thead>
                 <tr>
                   <th>M</th>
@@ -44,12 +43,10 @@ export function Player({ Batting, Bowling }) {
                 </tr>
               </tbody>
             </table>
-          </div>
         </li>
-        <li className="list-group-item list-group-item-primary p-1">
+        <li className="list-group-item list-group-item-success p-1" style={{ overflowX: "scroll" }}>
           <h3>Bowling Stats :</h3>
-          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2">
+            <table className="table">
               <thead>
                 <tr>
                   <th>M</th>
@@ -77,7 +74,6 @@ export function Player({ Batting, Bowling }) {
                 </tr>
               </tbody>
             </table>
-          </div>
         </li>
       </ul>
     </>

@@ -15,39 +15,40 @@ export default function Tournament() {
   }, []);
 
   const [teams, setTeams] = useState([{
-    name: "Loding...",
-    match: "Loding...",
-    win: "Loding...",
-    loss: "Loding...",
-    draw: "Loding...",
-    point: "Loding...",
+    name: "Loading...",
+    match: "Loading...",
+    win: "Loading...",
+    loss: "Loading...",
+    draw: "Loading...",
+    point: "Loading...",
+    NRR: "Loading...",
   }]);
 
   const [presentMatch, setPresentMatch] = useState([{
-    id: "Loding...",
-    team1: "Loding...",
-    team2: "Loding...",
-    date: "Loding...",
-    time: "Loding...",
-    winningMessage: "Loding...",
+    id: "Loading...",
+    team1: "Loading...",
+    team2: "Loading...",
+    date: "Loading...",
+    time: "Loading...",
+    winningMessage: "Loading...",
   }]);
 
   const [futureMatch, setFutureMatch] = useState([{
-    id: "Loding...",
-    team1: "Loding...",
-    team2: "Loding...",
-    date: "Loding...",
-    time: "Loding...",
-    winningMessage: "Loding...",
+    id: "Loading...",
+    team1: "Loading...",
+    team2: "Loading...",
+    date: "Loading...",
+    time: "Loading...",
+    winningMessage: "Loading...",
   }]);
 
   const [pastMatch, setPastMatch] = useState([{
-    id: "Loding...",
-    team1: "Loding...",
-    team2: "Loding...",
-    date: "Loding...",
-    time: "Loding...",
-    winningMessage: "Loding...",
+    id: "Loading...",
+    team1: "Loading...",
+    team2: "Loading...",
+    date: "Loading...",
+    time: "Loading...",
+    winningMessage: "Loading...",
   }]);
 
   useEffect(() => {
@@ -64,14 +65,23 @@ export default function Tournament() {
   useEffect(() => {
     const q = query(collection(db, `tournaments/${tournament}/matches`))
     onSnapshot(q, (querySnapshot) => {
-      let arr = []
+      let arr1 = []
+      let arr2 = []
+      let arr3 = []
       querySnapshot.forEach((t) => {
-        arr.push({ ...t.data() });
+        if (t.data().winningMessage === 'Match is not started yet')
+          arr2.push(t.data());
+        else if (t.data().hasMatchEnded) {
+          arr3.push(t.data());
+        }
+        else {
+          arr1.push(t.data());
+        }
       })
 
-      setPresentMatch(arr);
-      setFutureMatch(arr);
-      setPastMatch(arr);
+      setPresentMatch(arr1);
+      setFutureMatch(arr2);
+      setPastMatch(arr3);
     })
   }, [])
 
@@ -89,6 +99,7 @@ export default function Tournament() {
         <td>{t.loss}</td>
         <td>{t.draw}</td>
         <td>{t.point}</td>
+        <td>{t.NRR}</td>
       </tr>
     ))
   }
@@ -122,8 +133,8 @@ export default function Tournament() {
   return (
     <div>
       <h2>Point Table:</h2>
-      <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-        <table className="table table-striped table-info" border="2" cellPadding="5">
+      <div style={{ overflowX: "scroll" }}>
+        <table className="table table-striped table-hover table-info">
           <thead>
             <tr>
               <th>Name</th>
@@ -132,6 +143,7 @@ export default function Tournament() {
               <th>Loss</th>
               <th>Draw</th>
               <th>Point</th>
+              <th>NRR</th>
             </tr>
           </thead>
 
@@ -162,9 +174,9 @@ export default function Tournament() {
 
       <ul className="list-group">
         <li className="list-group-item list-group-item-success">
-          <h1>Present Match</h1>
-          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2" cellPadding="5">
+          <h3>Present Matches :</h3>
+          <div style={{ overflowX: "scroll" }}>
+            <table className="table table-striped table-hover table-info">
               <thead>
                 <tr>
                   <th>Match id</th>
@@ -187,9 +199,9 @@ export default function Tournament() {
 
         </li>
         <li className="list-group-item list-group-item-warning">
-          <h1>Future Match</h1>
-          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2" cellPadding="5">
+          <h3>Future Matches :</h3>
+          <div style={{ overflowX: "scroll" }}>
+            <table className="table table-striped table-hover table-info">
               <thead>
                 <tr>
                   <th>Match id</th>
@@ -210,9 +222,9 @@ export default function Tournament() {
           </div>
         </li>
         <li className="list-group-item list-group-item-dark">
-          <h1>Past Match</h1>
-          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-info" border="2" cellPadding="5">
+          <h3>Past Matches :</h3>
+          <div style={{ overflowX: "scroll" }}>
+            <table className="table table-striped table-hover table-info">
               <thead>
                 <tr>
                   <th>Match id</th>

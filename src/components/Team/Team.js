@@ -43,17 +43,19 @@ export default function Team() {
       <h5>Playing in tournament : {tournament}</h5>
 
       <br />
-      {user.uid && <div>
-        <Link to={`/tournament/${tournament}/${team}/addplayer`}>
-          <button type="button" className="btn btn-info">Add New Player</button>
-        </Link>
-        <br />
-        <br />
-      </div>}
+      {user.uid &&
+        <>
+          <Link to={`/tournament/${tournament}/${team}/addplayer`}>
+            <button type="button" className="btn btn-info">Add New Player</button>
+          </Link>
+          <br />
+          <br />
+        </>
+      }
 
-      <h2>All Team players :</h2>
 
-      <ul className="list-group">
+      <ul className="list-group list-group-item-success">
+        <h2>All Team players :</h2>
         {players.map((p, index) => (
           <li key={index} className="list-group-item list-group-item-success p-2">
 
@@ -67,6 +69,6 @@ export default function Team() {
         ))
         }
       </ul>
-    </ >
+    </>
   )
 }

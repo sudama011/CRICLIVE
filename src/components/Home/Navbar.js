@@ -26,7 +26,7 @@ export default function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
             {/* <img src={logo} className="bg-warning" alt="criclive" style={{ height: "40px", width: "60px" }} /> */}
-            <div className='h2 text-light'>criclive</div>
+            <Link to='/' className='h2 text-light nav-link'>criclive</Link>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>

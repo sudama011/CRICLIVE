@@ -26,6 +26,7 @@ export default function AddTeam() {
         loss: 0,
         draw: 0,
         point: 0,
+        NRR: 0
       }
       await setDoc(doc(db, `tournaments/${tournament}/teams`, values.name), values);
 
