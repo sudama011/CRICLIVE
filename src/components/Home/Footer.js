@@ -11,21 +11,21 @@ export default function Footer() {
                         <MDBCol md="3" lg="4" xl="3" className='mx-auto mb-2'>
                             <h6 className='text-uppercase fw-bold mb-4'>
                                 <MDBIcon icon="gem" className="me-3" />
-                                Criclive
+                                criclive
                             </h6>
                             <p>
                                 <MDBIcon icon="home" className="me-2" />
-                                New York, NY 10012, US
+                                MNIT, JAIPUR 302017, RAJ INDIA
                             </p>
                             <p>
                                 <MDBIcon icon="envelope" className="me-3" />
-                                info@example.com
+                                criclive@gmail.com
                             </p>
                             <p>
-                                <MDBIcon icon="phone" className="me-3" /> + 01 234 567 88
+                                <MDBIcon icon="phone" className="me-3" /> +91 9999999999
                             </p>
                             <p>
-                                <MDBIcon icon="print" className="me-3" /> + 01 234 567 89
+                                <MDBIcon icon="print" className="me-3" /> +91 8888888888
                             </p>
 
                         </MDBCol>
@@ -38,16 +38,16 @@ export default function Footer() {
                                 </a>
                             </p>
                             <p>
-                                <a href='https://twitter.com/sdhakad011' className='me-4 text-reset'>
+                                <a href='https://twitter.com/sdhakad011' target="_blank" rel="noopener noreferrer"  className='me-4 text-reset'>
                                     <MDBIcon fab icon="twitter" /> twitter
                                 </a>
                             </p><p>
-                                <a href='https://www.instagram.com/sudama.dhakad/' className='me-4 text-reset'>
+                                <a href='https://www.instagram.com/sudama.dhakad/' target="_blank" rel="noopener noreferrer" className='me-4 text-reset'>
                                     <MDBIcon fab icon="instagram" /> instagram
                                 </a>
                             </p>
                             <p>
-                                <a href='https://www.linkedin.com/in/sudama-dhakad-71a0a8201/' className='me-4 text-reset'>
+                                <a href='https://www.linkedin.com/in/sudama-dhakad-71a0a8201/' target="_blank" rel="noopener noreferrer" className='me-4 text-reset'>
                                     <MDBIcon fab icon="linkedin" /> linkedin
                                 </a>
                             </p>

@@ -8,6 +8,11 @@ export default function Team() {
   const { user } = useContext(UserContext);
   const { tournament, team } = useParams();
 
+  // set document title
+  useEffect(() => {
+    document.title = `${team} team-info`;
+  }, []);
+
   const [players, setPlayers] = useState([{
     name: "Loding..."
   }]);

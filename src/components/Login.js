@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -7,7 +7,12 @@ import { auth } from "../firebase";
 
 import styles from "./InputControl/InputForm.module.css";
 
-function Login() {
+export default function Login() {
+  // set document title
+  useEffect(() => {
+    document.title = 'Login Page';
+  }, []);
+
   const navigate = useNavigate();
   const [values, setValues] = useState({
     email: "",
@@ -71,5 +76,3 @@ function Login() {
       </div>
   );
 }
-
-export default Login;

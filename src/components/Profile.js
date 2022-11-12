@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import { UserContext } from '../context/userContext';
 
 export default function Profile() {
+  useEffect(() => {
+    document.title = 'my profile';
+  }, []);
 
   const { user } = useContext(UserContext);
   const [tournaments, setTournaments] = useState([{

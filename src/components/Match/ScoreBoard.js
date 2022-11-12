@@ -18,46 +18,17 @@ import { db } from '../../firebase';
 import { updateDoc, doc, query, collection, onSnapshot } from 'firebase/firestore';
 
 export default function ScoreBoard() {
+  
   const navigate = useNavigate()
   const tournamentDetails = useLocation().state;
   const tournament = tournamentDetails.tournament;
   const matchid = tournamentDetails.matchid;
-  const T1 = tournamentDetails.team1;
-  const T2 = tournamentDetails.team2;
+
+  const [isLocalStorageLoaded, setIsLocalStorageLoaded] = useState(false);
 
   const [playerListOfTeam1, setPlayerListOfTeam1] = useState([])
   const [playerListOfTeam2, setPlayerListOfTeam2] = useState([])
-  useEffect(() => {
-    const task = async () => {
-      try {
 
-        const q1 = query(collection(db, `tournaments/${tournament}/teams/${T1}/players`));
-        const q2 = query(collection(db, `tournaments/${tournament}/teams/${T2}/players`));
-
-        onSnapshot(q1, (querySnapshot) => {
-          let arr = []
-          querySnapshot.forEach((t) => {
-            arr.push(t.data().name);
-          })
-          setPlayerListOfTeam1(arr);
-        })
-
-        onSnapshot(q2, (querySnapshot) => {
-          let arr = []
-          querySnapshot.forEach((t) => {
-            arr.push(t.data().name);
-          })
-          setPlayerListOfTeam2(arr);
-        })
-
-      } catch (e) {
-
-      }
-    }
-    task()
-  }, []);
-
-  const [isLocalStorageLoaded, setIsLocalStorageLoaded] = useState(false);
   const [inningNo, setInningNo] = useState(1)
   const [match, setMatch] = useState({ inning1: { batters: [], bowlers: [] }, inning2: { batters: [], bowlers: [] } })
   const [currentRunStack, setCurrentRunStack] = useState([])
@@ -91,6 +62,10 @@ export default function ScoreBoard() {
   const [team2, setTeam2] = useState('')
   const [maxOver, setMaxOver] = useState(1)
 
+  // set document title
+  useEffect(() => {
+    document.title = `${team1} VS ${team2} - ${maxOver} overs - ${matchid}nd match - ${tournament} Live Score`;
+  }, [team1, team2]);
   // fetch data from localStorage
   useEffect(() => {
 
@@ -156,6 +131,38 @@ export default function ScoreBoard() {
   }, []);
 
   useEffect(() => {
+    if (isLocalStorageLoaded) {
+      const task = async () => {
+        try {
+
+          const q1 = query(collection(db, `tournaments/${tournament}/teams/${team1}/players`));
+          const q2 = query(collection(db, `tournaments/${tournament}/teams/${team2}/players`));
+
+          onSnapshot(q1, (querySnapshot) => {
+            let arr = []
+            querySnapshot.forEach((t) => {
+              arr.push(t.data().name);
+            })
+            setPlayerListOfTeam1(arr);
+          })
+
+          onSnapshot(q2, (querySnapshot) => {
+            let arr = []
+            querySnapshot.forEach((t) => {
+              arr.push(t.data().name);
+            })
+            setPlayerListOfTeam2(arr);
+          })
+
+        } catch (e) {
+
+        }
+      }
+      task()
+    }
+  }, []);
+
+  useEffect(() => {
 
     if (isLocalStorageLoaded) {
       localStorage.setItem(`tournament_${tournament}_match_${matchid}`, JSON.stringify(
@@ -196,7 +203,7 @@ export default function ScoreBoard() {
       ));
     }
 
-  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo]);
+  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match]);
 
   useEffect(() => {
     const endInningButton = document.getElementById('end-inning')
@@ -488,14 +495,16 @@ export default function ScoreBoard() {
 
 
   const overCompleted = (runsByOverParam, currentRunStackParam) => {
+    disableAllScoreButtons()
     const bowlerNameElement = document.getElementById('bowlerName')
-    if (overCount + 1 === maxOver) {
+    bowlerNameElement.value = ''
+    if (overCount + 1 >= maxOver) {
       const endInningButton = document.getElementById('end-inning')
       endInningButton.disabled = false
     } else {
       bowlerNameElement.disabled = false
     }
-    disableAllScoreButtons()
+    console.log(1)
     setRecentOvers((state) => [
       ...state,
       { overNo: overCount + 1, bowler: bowler.name, runs: runsByOverParam, stack: currentRunStackParam },
@@ -1222,7 +1231,7 @@ export default function ScoreBoard() {
       task();
     }
 
-  }, [ballCount, extras, batter1, batter2, bowler, hasMatchEnded]);
+  }, [ballCount, overCount, extras, batter1, batter2, bowler, hasMatchEnded, match, inningNo]);
 
 
   const welcomeContent = (
@@ -1455,7 +1464,7 @@ export default function ScoreBoard() {
                   <option key={i} value={p1}>{p1}</option>
                 ))
                 :
-                playerListOfTeam2.map((p1, i) => (
+                playerListOfTeam1.map((p1, i) => (
                   <option key={i} value={p1}>{p1}</option>
                 ))
               }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
@@ -7,7 +7,12 @@ import { auth } from "../firebase";
 
 import styles from "./InputControl/InputForm.module.css";
 
-function Signup() {
+export default function Signup() {
+  // set document title
+  useEffect(() => {
+    document.title = 'Signup Page';
+  }, []);
+
   const navigate = useNavigate();
   const [values, setValues] = useState({
     name: "",
@@ -84,5 +89,3 @@ function Signup() {
     </div>
   );
 }
-
-export default Signup;

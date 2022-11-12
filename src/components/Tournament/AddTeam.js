@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
@@ -11,6 +11,10 @@ export default function AddTeam() {
   const [errorMsg, setErrorMsg] = useState("");
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 
+  // set document title
+  useEffect(() => {
+    document.title = `Add team - ${tournament}`;
+  }, []);
   const name = useRef("");
   
   const postData = async () => {

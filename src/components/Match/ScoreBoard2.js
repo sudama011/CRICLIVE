@@ -84,7 +84,10 @@ export default function ScoreBoard2() {
 
     }, []);
 
-
+    // set document title
+    useEffect(() => {
+        document.title = `${team1} VS ${team2} - ${maxOver} overs - ${matchid}nd match - ${tournament} Live Score`;
+    }, [team1,team2]);
 
     const inning1 = match.inning1
     const inning2 = match.inning2

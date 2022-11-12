@@ -9,6 +9,11 @@ export default function Tournament() {
   const navigate = useNavigate();
   const { tournament } = useParams();
 
+  // set document title
+  useEffect(() => {
+    document.title = `${tournament} - Point table - matches`;
+  }, []);
+
   const [teams, setTeams] = useState([{
     name: "Loding...",
     match: "Loding...",
@@ -24,7 +29,7 @@ export default function Tournament() {
     team2: "Loding...",
     date: "Loding...",
     time: "Loding...",
-    winner: "Loding...",
+    winningMessage: "Loding...",
   }]);
 
   const [futureMatch, setFutureMatch] = useState([{
@@ -33,7 +38,7 @@ export default function Tournament() {
     team2: "Loding...",
     date: "Loding...",
     time: "Loding...",
-    winner: "Loding...",
+    winningMessage: "Loding...",
   }]);
 
   const [pastMatch, setPastMatch] = useState([{
@@ -42,7 +47,7 @@ export default function Tournament() {
     team2: "Loding...",
     date: "Loding...",
     time: "Loding...",
-    winner: "Loding...",
+    winningMessage: "Loding...",
   }]);
 
   useEffect(() => {

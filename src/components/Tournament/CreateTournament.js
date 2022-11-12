@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
@@ -7,6 +7,9 @@ import { doc, setDoc } from "firebase/firestore";
 import { UserContext } from "../../context/userContext";
 
 function CreateTournament() {
+  useEffect(() => {
+    document.title = 'create tournament';
+  }, []);
   const { user } = useContext(UserContext);
 
   const navigate = useNavigate();

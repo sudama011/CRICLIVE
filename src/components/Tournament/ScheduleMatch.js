@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
@@ -8,13 +8,17 @@ import { doc, setDoc } from "firebase/firestore";
 export default function ScheduleMatch() {
   const location = useLocation();
   const teams = location.state.teams;
+  const { tournament } = useParams();
+  const navigate = useNavigate();
+  // set document title
+  useEffect(() => {
+    document.title = `Schedule a Match - ${tournament}`;
+  }, [tournament]);
 
   const selectTeam = teams.map((team, index) => (
     <option key={index} value={team.name}>{team.name}</option>
   ));
 
-  const { tournament } = useParams();
-  const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 

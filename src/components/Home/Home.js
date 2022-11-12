@@ -4,38 +4,41 @@ import { collection, query, onSnapshot,orderBy } from "firebase/firestore";
 import { Link } from "react-router-dom";
 function Home() {
 
-
+    // set document title
+    useEffect(() => {
+        document.title = 'Home Page';
+    }, []);
     const [presentTournament, setPresentTournament] = useState([{
-        name: "Loding...",
-        startDate: "Loding...",
-        endDate: "Loding...",
-        prize: "Loding...",
-        village: "Loding...",
-        city: "Loding...",
-        state: "Loding...",
-        organiser: "Loding...",
+        name: "Loading...",
+        startDate: "Loading...",
+        endDate: "Loading...",
+        prize: "Loading...",
+        village: "Loading...",
+        city: "Loading...",
+        state: "Loading...",
+        organiser: "Loading...",
     }]);
 
     const [futureTournament, setFutureTournament] = useState([{
-        name: "Loding...",
-        startDate: "Loding...",
-        endDate: "Loding...",
-        prize: "Loding...",
-        village: "Loding...",
-        city: "Loding...",
-        state: "Loding...",
-        organiser: "Loding...",
+        name: "Loading...",
+        startDate: "Loading...",
+        endDate: "Loading...",
+        prize: "Loading...",
+        village: "Loading...",
+        city: "Loading...",
+        state: "Loading...",
+        organiser: "Loading...",
     }]);
 
     const [pastTournament, setPastTournament] = useState([{
-        name: "Loding...",
-        startDate: "Loding...",
-        endDate: "Loding...",
-        prize: "Loding...",
-        village: "Loding...",
-        city: "Loding...",
-        state: "Loding...",
-        organiser: "Loding...",
+        name: "Loading...",
+        startDate: "Loading...",
+        endDate: "Loading...",
+        prize: "Loading...",
+        village: "Loading...",
+        city: "Loading...",
+        state: "Loading...",
+        organiser: "Loading...",
     }]);
 
     useEffect(() => {
