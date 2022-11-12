@@ -58,7 +58,7 @@ function Home() {
             <li className="list-group-item list-group-item-success">
                 <h3>All Tournaments</h3>
                 <div style={{ overflowX: "scroll" }}>
-                    <table className="table table-striped table-hover table-info">
+                    <table className="table table-info">
                         <thead>
                             <tr>
                                 <th>Name</th>

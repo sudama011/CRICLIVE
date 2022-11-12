@@ -134,7 +134,7 @@ export default function Tournament() {
     <div>
       <h2>Point Table:</h2>
       <div style={{ overflowX: "scroll" }}>
-        <table className="table table-striped table-hover table-info">
+        <table className="table table-info">
           <thead>
             <tr>
               <th>Name</th>
@@ -176,7 +176,7 @@ export default function Tournament() {
         <li className="list-group-item list-group-item-success">
           <h3>Present Matches :</h3>
           <div style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-hover table-info">
+            <table className="table table-info">
               <thead>
                 <tr>
                   <th>Match id</th>
@@ -201,7 +201,7 @@ export default function Tournament() {
         <li className="list-group-item list-group-item-warning">
           <h3>Future Matches :</h3>
           <div style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-hover table-info">
+            <table className="table table-info">
               <thead>
                 <tr>
                   <th>Match id</th>
@@ -224,7 +224,7 @@ export default function Tournament() {
         <li className="list-group-item list-group-item-dark">
           <h3>Past Matches :</h3>
           <div style={{ overflowX: "scroll" }}>
-            <table className="table table-striped table-hover table-info">
+            <table className="table table-info">
               <thead>
                 <tr>
                   <th>Match id</th>

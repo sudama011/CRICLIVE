@@ -7,7 +7,7 @@ import { theme } from './components/Match/ui/Theme'
 import Container from './components/Match/Container'
 import { UserContext } from './context/userContext';
 
-import Footer from './components/Home/Footer';
+// import Footer from './components/Home/Footer';
 import Navbar from './components/Home/Navbar';
 import Home from './components/Home/Home';
 
@@ -60,7 +60,7 @@ function App() {
 
         </Routes>
 
-        <Footer />
+        {/* <Footer /> */}
       </BrowserRouter>
 
     </>

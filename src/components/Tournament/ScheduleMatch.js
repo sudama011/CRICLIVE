@@ -51,12 +51,16 @@ export default function ScheduleMatch() {
   };
 
   const handleSubmission = (e) => {
+    if (!id.current.value || !team1.current.value || !team2.current.value || !date.current.value || !time.current.value) {
+      setErrorMsg("Fill all fields");
+      return;
+    }
     if (team1.current.value === team2.current.value) {
       setErrorMsg("team1 cannot be equal to team2.");
       return;
     }
-    if (!id.current.value || !team1.current.value || !team2.current.value || !date.current.value || !time.current.value) {
-      setErrorMsg("Fill all fields");
+    if (parseInt(id.current.value) < 1 || parseInt(id.current.value) > 200) {
+      setErrorMsg("ID must be between 1 and 200");
       return;
     }
     setErrorMsg("");
@@ -73,6 +77,8 @@ export default function ScheduleMatch() {
           <label>ID</label>
           <input
             type="number"
+            min='1'
+            max='200'
             ref={id}
             placeholder="Enter Match id"
             autoFocus

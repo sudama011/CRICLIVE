@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { IconButton } from '@mui/material'
@@ -18,7 +19,7 @@ import { db } from '../../firebase';
 import { updateDoc, doc, query, collection, onSnapshot } from 'firebase/firestore';
 
 export default function ScoreBoard() {
-  
+
   const navigate = useNavigate()
   const tournamentDetails = useLocation().state;
   const tournament = tournamentDetails.tournament;
@@ -108,19 +109,10 @@ export default function ScoreBoard() {
           if (data.team2) await setTeam2(data.team2);
           if (data.batting) await setBatting(data.batting);
 
-          if (data.batter1 && data.batter1.name) {
-            document.getElementById('batter1Name').value = data.batter1.name
-            document.getElementById('batter1Name').disabled = true
-          }
-          if (data.batter2 && data.batter2.name) {
-            document.getElementById('batter2Name').value = data.batter2.name
-            document.getElementById('batter2Name').disabled = true
-          }
-          if (data.bowler && data.bowler.name) {
-            document.getElementById('bowlerName').disabled = true
-          }
           if (data.maxOver)
             setIsLocalStorageLoaded(true);
+
+          $('#end-inning').prop('disabled', true);
         }
       } catch (err) {
         console.error(err);
@@ -130,7 +122,9 @@ export default function ScoreBoard() {
 
   }, []);
 
+  // fetch player list from server
   useEffect(() => {
+
     if (isLocalStorageLoaded) {
       const task = async () => {
         try {
@@ -160,8 +154,28 @@ export default function ScoreBoard() {
       }
       task()
     }
-  }, []);
+  }, [isLocalStorageLoaded]);
 
+  // set select option according to prev values
+  useEffect(() => {
+
+    if (batter1.name !== undefined && batter1.name !== '') {
+      $("#batter1Name").val(batter1.name)
+      $("#batter1Name").prop('disabled', true)
+    }
+
+    if (batter2.name !== undefined && batter2.name !== '') {
+      $("#batter2Name").val(batter2.name)
+      $("#batter2Name").prop('disabled', true)
+    }
+    if (bowler.name !== undefined && bowler.name !== '') {
+      $("#bowlerName").val(bowler.name)
+      $("#bowlerName").prop('disabled', true)
+    }
+
+  }, [playerListOfTeam2]);
+
+  // update data in localStorage to retain states in case of page reload
   useEffect(() => {
 
     if (isLocalStorageLoaded) {
@@ -203,12 +217,7 @@ export default function ScoreBoard() {
       ));
     }
 
-  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match]);
-
-  useEffect(() => {
-    const endInningButton = document.getElementById('end-inning')
-    endInningButton.disabled = true
-  }, [])
+  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match,isBatter1Edited, isBatter2Edited,isBowlerEdited]);
 
   const handleEndInning = (e) => {
     const endInningButton = document.getElementById('end-inning')
@@ -216,7 +225,7 @@ export default function ScoreBoard() {
       navigate('/');
     }
 
-    if (batter1.name !== undefined) {
+    if (batter1.name !== undefined && batter1.name !== '') {
       const { name, run, ball, four, six, strikeRate, onStrike } = batter1
       batters.push({
         name,
@@ -230,7 +239,7 @@ export default function ScoreBoard() {
         battingStatus: BATTING,
       })
     }
-    if (batter2.name !== undefined) {
+    if (batter2.name !== undefined && batter2.name !== '') {
       batters.push({
         name: batter2.name,
         run: batter2.run,
@@ -243,7 +252,7 @@ export default function ScoreBoard() {
         battingStatus: BATTING,
       })
     }
-    if (bowler.name !== undefined) {
+    if (bowler.name !== undefined && bowler.name !== '') {
       const currentDisplayOver = Math.round((ballCount === 6 ? 1 : ballCount * 0.1) * 10) / 10
       let isMaidenOver = true
       let countWicket = 0
@@ -338,6 +347,7 @@ export default function ScoreBoard() {
       setRemainingBalls(maxOver * 6)
       setRemainingRuns(totalRuns + 1)
       const bowlerNameElement = document.getElementById('bowlerName')
+      bowlerNameElement.value = ''
       bowlerNameElement.disabled = false
       const batter1NameElement = document.getElementById('batter1Name')
       batter1NameElement.value = ''
@@ -430,7 +440,7 @@ export default function ScoreBoard() {
   const handleBatter1Blur = (e) => {
     let name = e.target.value
     e.target.disabled = true
-    if (isBatter1Edited) {
+    if (isBatter1Edited){
       setBatter1((state) => ({
         ...state,
         name: name,
@@ -504,7 +514,7 @@ export default function ScoreBoard() {
     } else {
       bowlerNameElement.disabled = false
     }
-    console.log(1)
+
     setRecentOvers((state) => [
       ...state,
       { overNo: overCount + 1, bowler: bowler.name, runs: runsByOverParam, stack: currentRunStackParam },
@@ -1157,7 +1167,7 @@ export default function ScoreBoard() {
       scoreTypesButtons[i].disabled = false
     }
   }
-  if (batter1.name !== undefined && batter2.name !== undefined) {
+  if (batter1.name !== undefined && batter2.name !== undefined && bowler.name !== undefined) {
     enableAllScoreButtons()
   }
   let rrr = (remainingRuns / (remainingBalls / 6)).toFixed(2)
