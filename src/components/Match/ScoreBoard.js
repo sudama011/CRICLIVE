@@ -16,7 +16,7 @@ import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
 import { db } from '../../firebase';
-import { updateDoc, doc, query, collection, onSnapshot } from 'firebase/firestore';
+import { updateDoc, doc, getDoc, query, collection, onSnapshot } from 'firebase/firestore';
 
 export default function ScoreBoard() {
 
@@ -135,7 +135,7 @@ export default function ScoreBoard() {
           onSnapshot(q1, (querySnapshot) => {
             let arr = []
             querySnapshot.forEach((t) => {
-              arr.push(t.data().name);
+              arr.push(t.data());
             })
             setPlayerListOfTeam1(arr);
           })
@@ -143,7 +143,7 @@ export default function ScoreBoard() {
           onSnapshot(q2, (querySnapshot) => {
             let arr = []
             querySnapshot.forEach((t) => {
-              arr.push(t.data().name);
+              arr.push(t.data());
             })
             setPlayerListOfTeam2(arr);
           })
@@ -217,11 +217,67 @@ export default function ScoreBoard() {
       ));
     }
 
-  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match,isBatter1Edited, isBatter2Edited,isBowlerEdited]);
+  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match, isBatter1Edited, isBatter2Edited, isBowlerEdited]);
+
+  // update team points NRR players stats after finishing match
+  const updatePointTable = () => {
+    if (inningNo === 1) return;
+
+    const task = async () => {
+      try {
+
+        const team1DocRef = doc(db, `tournaments/${tournament}/teams`, team1);
+        const team2DocRef = doc(db, `tournaments/${tournament}/teams`, team2);
+        const team1Details = (await getDoc(team1DocRef)).data();
+        const team2Details = (await getDoc(team2DocRef)).data();
+        const inning1 = match.inning1
+        const inning2 = match.inning2
+
+        team1Details.match = team1Details.match + 1
+        team2Details.match = team2Details.match + 1
+
+        let nrr = Math.round(((parseFloat(inning1.runRate) - parseFloat(inning2.runRate)) / 6) * 1000) / 1000;
+        team1Details.NRR = team1Details.NRR + nrr;
+        team2Details.NRR = team2Details.NRR - nrr;
+
+        if (inning1.runs === inning2.runs) {
+          // match Tied
+          team1Details.draw = team1Details.draw + 1
+          team2Details.draw = team2Details.draw + 1
+
+          team1Details.point = team1Details.point + 1
+          team2Details.point = team2Details.point + 1
+
+        } else if (inning1.runs > inning2.runs) {
+          // team1 won the match 
+          team1Details.win = team1Details.win + 1
+          team2Details.loss = team2Details.loss + 1
+
+          team1Details.point = team1Details.point + 2
+
+        } else {
+          // team2 won the match
+          team1Details.loss = team1Details.loss + 1
+          team2Details.win = team2Details.win + 1
+
+          team2Details.point = team2Details.point + 2
+        }
+
+
+        await updateDoc(team1DocRef, team1Details);
+        await updateDoc(team2DocRef, team2Details);
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    task()
+  }
+
 
   const handleEndInning = (e) => {
     const endInningButton = document.getElementById('end-inning')
     if (endInningButton.textContent === 'Reset') {
+      updatePointTable();
       navigate('/');
     }
 
@@ -310,24 +366,7 @@ export default function ScoreBoard() {
       }
     }
     if (inningNo === 1) {
-      setMatch((state) => {
-        const totalFours = batters.map((batter) => batter.four).reduce((prev, next) => prev + next)
-        const totalSixes = batters.map((batter) => batter.six).reduce((prev, next) => prev + next)
-        return {
-          ...state,
-          inning1: {
-            runs: totalRuns,
-            wickets: wicketCount,
-            runRate: crr,
-            overs: totalOvers,
-            four: totalFours,
-            six: totalSixes,
-            extra: extras,
-            batters,
-            bowlers,
-          },
-        }
-      })
+      updateMatch()
       setInningNo(2)
       setCurrentRunStack([])
       setTotalRuns(0)
@@ -358,27 +397,7 @@ export default function ScoreBoard() {
       setStrikeValue('strike')
       endInningButton.disabled = true
     } else {
-      setMatch((state) => {
-        let totalFours = 0, totalSixes = 0;
-        batters.forEach((b) => {
-          totalFours += b.four
-          totalSixes += b.six
-        })
-        return {
-          ...state,
-          inning2: {
-            runs: totalRuns,
-            wickets: wicketCount,
-            runRate: crr,
-            overs: totalOvers,
-            four: totalFours,
-            six: totalSixes,
-            extra: extras,
-            batters,
-            bowlers,
-          },
-        }
-      })
+      updateMatch()
       endInningButton.textContent = 'Reset'
       setMatchEnded(true)
       localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
@@ -394,8 +413,6 @@ export default function ScoreBoard() {
           totalFours += b.four
           totalSixes += b.six
         })
-
-
         return {
           ...state,
           inning1: {
@@ -440,7 +457,7 @@ export default function ScoreBoard() {
   const handleBatter1Blur = (e) => {
     let name = e.target.value
     e.target.disabled = true
-    if (isBatter1Edited){
+    if (isBatter1Edited) {
       setBatter1((state) => ({
         ...state,
         name: name,
@@ -1413,11 +1430,11 @@ export default function ScoreBoard() {
                   <select id='batter1Name' className='batter-name' onBlur={handleBatter1Blur}>
                     {((inningNo === 1 && team1 === scoringTeam) || (inningNo === 2 && team1 === chessingTeam)) ?
                       playerListOfTeam1.map((p1, i) => (
-                        <option key={i} value={p1}>{p1}</option>
+                        <option key={i} value={p1.name}>{p1.name}</option>
                       ))
                       :
                       playerListOfTeam2.map((p1, i) => (
-                        <option key={i} value={p1}>{p1}</option>
+                        <option key={i} value={p1.name}>{p1.name}</option>
                       ))
                     }
                   </select>
@@ -1446,11 +1463,11 @@ export default function ScoreBoard() {
                   <select id='batter2Name' className='batter-name' onBlur={handleBatter2Blur}>
                     {((inningNo === 1 && team1 === scoringTeam) || (inningNo === 2 && team1 === chessingTeam)) ?
                       playerListOfTeam1.map((p1, i) => (
-                        <option key={i} value={p1}>{p1}</option>
+                        <option key={i} value={p1.name}>{p1.name}</option>
                       ))
                       :
                       playerListOfTeam2.map((p1, i) => (
-                        <option key={i} value={p1}>{p1}</option>
+                        <option key={i} value={p1.name}>{p1.name}</option>
                       ))
                     }
                   </select>
@@ -1471,11 +1488,11 @@ export default function ScoreBoard() {
             Bowler:<select id='bowlerName' className='bowler-name' onBlur={handleBowlerBlur}>
               {((inningNo === 1 && team1 === scoringTeam) || (inningNo === 2 && team1 === chessingTeam)) ?
                 playerListOfTeam2.map((p1, i) => (
-                  <option key={i} value={p1}>{p1}</option>
+                  <option key={i} value={p1.name}>{p1.name}</option>
                 ))
                 :
                 playerListOfTeam1.map((p1, i) => (
-                  <option key={i} value={p1}>{p1}</option>
+                  <option key={i} value={p1.name}>{p1.name}</option>
                 ))
               }
             </select>
