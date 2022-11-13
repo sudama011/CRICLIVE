@@ -262,10 +262,122 @@ export default function ScoreBoard() {
 
           team2Details.point = team2Details.point + 2
         }
-
-
         await updateDoc(team1DocRef, team1Details);
         await updateDoc(team2DocRef, team2Details);
+
+        // update players stats
+        // playerListOfTeam1
+
+        const playersOfTeam1 = {}
+        const playersOfTeam2 = {}
+
+        playerListOfTeam1.forEach((player) => {
+          playersOfTeam1[player.name] = player;
+        })
+        playerListOfTeam2.forEach((player) => {
+          playersOfTeam2[player.name] = player;
+        })
+
+        // for inning1 players
+        inning1.batters.forEach((p) => {
+
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+          const a = playersOfTeam1[p.name].Batting
+
+          const updatedInfo = {
+            Batting: {
+              M: a.M + 1,
+              Inn: a.Inn + 1,
+              No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+              Runs: a.Runs + p.run,
+              Hs: Math.max(a.Hs, p.run),
+              Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+              BF: a.BF + p.ball,
+              SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
+              4: a[4] + p.four,
+              6: a[6] + p.six,
+              50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
+              100: a[100] + p.run >= 100 ? 1 : 0
+            }
+          }
+          updateDoc(playerRef, updatedInfo);
+        })
+
+        inning1.bowlers.forEach((p, i) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+          const a = playersOfTeam2[p.name].Bowling
+
+          const updatedInfo = {
+            Bowling: {
+              M: a.M + 1,
+              Inn: a.Inn + 1,
+              B: a.B + p.over * 6, // check
+              Runs: a.Runs + p.run,
+              Wkts: a.Wkts + p.wicket,
+              BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
+                {
+                  W: p.wicket,
+                  R: p.run
+                } :
+                a.BB,
+              Econ: ((a.Runs + p.run) / (a.B + p.over * 6)) * 6,
+              Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
+              5: a[5] + p.wicket >= 5 ? 1 : 0
+            }
+          }
+          updateDoc(playerRef, updatedInfo);
+        })
+
+        // for inning2 players
+        inning2.batters.forEach((p, i) => {
+
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+          const a = playersOfTeam2[p.name].Batting
+
+          const updatedInfo = {
+            Batting: {
+              M: a.M + 1,
+              Inn: a.Inn + 1,
+              No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+              Runs: a.Runs + p.run,
+              Hs: Math.max(a.Hs, p.run),
+              Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+              BF: a.BF + p.ball,
+              SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
+              4: a[4] + p.four,
+              6: a[6] + p.six,
+              50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
+              100: a[100] + p.run >= 100 ? 1 : 0
+            }
+          }
+          updateDoc(playerRef, updatedInfo);
+        })
+
+        inning2.bowlers.forEach((p, i) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+          const a = playersOfTeam1[p.name].Bowling
+
+          const updatedInfo = {
+            Bowling: {
+              M: a.M + 1,
+              Inn: a.Inn + 1,
+              B: a.B + p.over * 6, // check
+              Runs: a.Runs + p.run,
+              Wkts: a.Wkts + p.wicket,
+              BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
+                {
+                  W: p.wicket,
+                  R: p.run
+                } :
+                a.BB,
+              Econ: ((a.Runs + p.run) / (a.B + p.over * 6)) * 6,
+              Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
+              5: a[5] + p.wicket >= 5 ? 1 : 0
+            }
+          }
+          updateDoc(playerRef, updatedInfo);
+        })
+
       } catch (e) {
         console.error(e)
       }
@@ -278,7 +390,7 @@ export default function ScoreBoard() {
     const endInningButton = document.getElementById('end-inning')
     if (endInningButton.textContent === 'Reset') {
       updatePointTable();
-      navigate('/');
+      navigate(`/tournament/${tournament}`);
     }
 
     if (batter1.name !== undefined && batter1.name !== '') {

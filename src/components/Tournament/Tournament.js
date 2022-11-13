@@ -143,7 +143,7 @@ export default function Tournament() {
               <th>Loss</th>
               <th>Draw</th>
               <th>Point</th>
-              <th>NRR</th>
+              <th title='Net run rate'>NRR</th>
             </tr>
           </thead>
 
