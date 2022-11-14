@@ -222,7 +222,7 @@ export default function ScoreBoard() {
       ));
     }
 
-  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match, isBatter1Edited, isBatter2Edited, isBowlerEdited]);
+  }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, match]);
 
   // update team points NRR players stats after finishing match
   const updatePointTable = async () => {
@@ -296,10 +296,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -345,10 +345,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -396,10 +396,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -445,10 +445,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -507,34 +507,71 @@ export default function ScoreBoard() {
       }, 2500);
     }
 
-    if (batter1.name !== undefined && batter1.name !== '') {
+    if (batter1.name !== undefined) {
+      const index = batters.findIndex((b) => {
+        return b.name === batter1.name
+      })
       const { name, run, ball, four, six, strikeRate, onStrike } = batter1
-      batters.push({
-        name,
-        run,
-        ball,
-        four,
-        six,
-        strikeRate,
-        onStrike,
-        battingOrder: batter1.battingOrder,
-        battingStatus: BATTING,
-      })
+      if (index === -1) {
+        batters.push({
+          name,
+          run,
+          ball,
+          four,
+          six,
+          strikeRate,
+          onStrike,
+          battingOrder: batter1.battingOrder,
+          battingStatus: BATTING,
+        })
+      }
+      else {
+        batters[index] = {
+          name,
+          run,
+          ball,
+          four,
+          six,
+          strikeRate,
+          onStrike,
+          battingOrder: batter1.battingOrder,
+          battingStatus: BATTING,
+        }
+      }
     }
-    if (batter2.name !== undefined && batter2.name !== '') {
-      batters.push({
-        name: batter2.name,
-        run: batter2.run,
-        ball: batter2.ball,
-        four: batter2.four,
-        six: batter2.six,
-        strikeRate: batter2.strikeRate,
-        onStrike: batter2.onStrike,
-        battingOrder: batter2.battingOrder,
-        battingStatus: BATTING,
+    if (batter2.name !== undefined) {
+      const index = batters.findIndex((b) => {
+        return b.name === batter2.name
       })
+      const { name, run, ball, four, six, strikeRate, onStrike } = batter2
+      if (index === -1) {
+        batters.push({
+          name,
+          run,
+          ball,
+          four,
+          six,
+          strikeRate,
+          onStrike,
+          battingOrder: batter1.battingOrder,
+          battingStatus: BATTING,
+        })
+      }
+      else {
+        batters[index] = {
+          name,
+          run,
+          ball,
+          four,
+          six,
+          strikeRate,
+          onStrike,
+          battingOrder: batter1.battingOrder,
+          battingStatus: BATTING,
+        }
+      }
     }
-    if (bowler.name !== undefined && bowler.name !== '') {
+    if (bowler.name !== undefined) {
       const currentDisplayOver = Math.round((ballCount === 6 ? 1 : ballCount * 0.1) * 10) / 10
       let isMaidenOver = true
       let countWicket = 0
@@ -591,8 +628,8 @@ export default function ScoreBoard() {
         }
       }
     }
+    updateMatch()
     if (inningNo === 1) {
-      updateMatch()
       setInningNo(2)
       setCurrentRunStack([])
       setTotalRuns(0)
@@ -623,7 +660,6 @@ export default function ScoreBoard() {
       setStrikeValue('strike')
       endInningButton.disabled = true
     } else {
-      updateMatch()
       endInningButton.textContent = 'Reset'
       setMatchEnded(true)
     }
@@ -702,6 +738,7 @@ export default function ScoreBoard() {
       })
       setBattingOrder(battingOrder + 1)
     }
+    updateMatch()
   }
   const handleBatter2Blur = (e) => {
     let name = e.target.value
@@ -726,6 +763,7 @@ export default function ScoreBoard() {
       })
       setBattingOrder(battingOrder + 1)
     }
+    updateMatch()
   }
   const handleBowlerBlur = (e) => {
     let name = e.target.value
@@ -743,6 +781,7 @@ export default function ScoreBoard() {
         name,
       })
     }
+    updateMatch()
   }
 
 
@@ -937,6 +976,7 @@ export default function ScoreBoard() {
     }
     batters.pop()
     setBatters(batters)
+    updateMatch()
   }
 
   const undoRun = (run, isNoBallParam) => {
@@ -1278,6 +1318,7 @@ export default function ScoreBoard() {
     }
   }
   const handleWicket = (isRunOut, playerName) => {
+    handleRun(0)
     setRunOutPlayerName('')
     setRemainingBalls(remainingBalls - 1)
     if (ballCount === 5) {
@@ -1483,7 +1524,7 @@ export default function ScoreBoard() {
       task();
     }
 
-  }, [ballCount, overCount, extras, batter1, batter2, bowler, hasMatchEnded, match, inningNo]);
+  }, [ballCount, extras, batter1, batter2, bowler, hasMatchEnded, match]);
 
 
   const welcomeContent = (
