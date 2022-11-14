@@ -132,7 +132,7 @@ export default function ScoreBoard() {
           const q1 = query(collection(db, `tournaments/${tournament}/teams/${team1}/players`));
           const q2 = query(collection(db, `tournaments/${tournament}/teams/${team2}/players`));
 
-          onSnapshot(q1, (querySnapshot) => {
+          const unsubscribe1 = await onSnapshot(q1, (querySnapshot) => {
             let arr = []
             querySnapshot.forEach((t) => {
               arr.push(t.data());
@@ -140,13 +140,18 @@ export default function ScoreBoard() {
             setPlayerListOfTeam1(arr);
           })
 
-          onSnapshot(q2, (querySnapshot) => {
+          const unsubscribe2 = await onSnapshot(q2, (querySnapshot) => {
             let arr = []
             querySnapshot.forEach((t) => {
               arr.push(t.data());
             })
             setPlayerListOfTeam2(arr);
           })
+
+          setTimeout(() => {
+            unsubscribe1()
+            unsubscribe2()
+          }, 2000)
 
         } catch (e) {
 
@@ -271,7 +276,6 @@ export default function ScoreBoard() {
       playerListOfTeam1.forEach((player) => {
         playersOfTeam1[String(player.name)] = player;
         const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, player.name);
-        console.log(player.Batting)
         updateDoc(playerRef, {
           M: player.M + 1
         })
@@ -284,14 +288,13 @@ export default function ScoreBoard() {
         })
       })
 
+      if (batting === team1) {
+        // for inning1 team1 batters and team2 bowlers update
+        inning1.batters.forEach((p) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+          const a = playersOfTeam1[String(p.name)].Batting
 
-      // for inning1 players
-      inning1.batters.forEach((p) => {
-        const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
-        const a = playersOfTeam1[String(p.name)].Batting
-
-        const updatedInfo = {
-          Batting: {
+          const Batting = {
             Inn: a.Inn + 1,
             No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
             Runs: a.Runs + p.run,
@@ -304,16 +307,16 @@ export default function ScoreBoard() {
             50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
             100: a[100] + p.run >= 100 ? 1 : 0
           }
-        }
-        updateDoc(playerRef, updatedInfo);
-      })
+          updateDoc(playerRef, {
+            Batting: Batting
+          });
+        })
 
-      inning1.bowlers.forEach((p, i) => {
-        const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
-        const a = playersOfTeam2[String(p.name)].Bowling
+        inning1.bowlers.forEach((p, i) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+          const a = playersOfTeam2[String(p.name)].Bowling
 
-        const updatedInfo = {
-          Bowling: {
+          const Bowling = {
             Inn: a.Inn + 1,
             B: a.B + Math.round(p.over) * 6 + (p.over * 10) % 10,
             Runs: a.Runs + p.run,
@@ -328,18 +331,19 @@ export default function ScoreBoard() {
             Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
             5: a[5] + p.wicket >= 5 ? 1 : 0
           }
-        }
-        updateDoc(playerRef, updatedInfo);
-      })
 
-      // for inning2 players
-      inning2.batters.forEach((p, i) => {
+          updateDoc(playerRef, {
+            Bowling: Bowling
+          });
+        })
 
-        const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
-        const a = playersOfTeam2[String(p.name)].Batting
+        // for inning2 players
+        inning2.batters.forEach((p, i) => {
 
-        const updatedInfo = {
-          Batting: {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+          const a = playersOfTeam2[String(p.name)].Batting
+
+          const Batting = {
             Inn: a.Inn + 1,
             No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
             Runs: a.Runs + p.run,
@@ -352,16 +356,16 @@ export default function ScoreBoard() {
             50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
             100: a[100] + p.run >= 100 ? 1 : 0
           }
-        }
-        updateDoc(playerRef, updatedInfo);
-      })
+          updateDoc(playerRef, {
+            Batting: Batting
+          });
+        })
 
-      inning2.bowlers.forEach((p, i) => {
-        const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
-        const a = playersOfTeam1[String(p.name)].Bowling
+        inning2.bowlers.forEach((p, i) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+          const a = playersOfTeam1[String(p.name)].Bowling
 
-        const updatedInfo = {
-          Bowling: {
+          const Bowling = {
             Inn: a.Inn + 1,
             B: a.B + Math.round(p.over) * 6 + (p.over * 10) % 10,
             Runs: a.Runs + p.run,
@@ -376,14 +380,115 @@ export default function ScoreBoard() {
             Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
             5: a[5] + p.wicket >= 5 ? 1 : 0
           }
-        }
-        updateDoc(playerRef, updatedInfo);
-      })
 
-      return true;
+          updateDoc(playerRef, {
+            Bowling: Bowling
+          });
+        })
+
+      }
+      else {
+        // vice versa
+        // for inning1 team2 batters and team1 bowlers update
+        inning1.batters.forEach((p) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+          const a = playersOfTeam2[String(p.name)].Batting
+
+          const Batting = {
+            Inn: a.Inn + 1,
+            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            Runs: a.Runs + p.run,
+            Hs: Math.max(a.Hs, p.run),
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            BF: a.BF + p.ball,
+            SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
+            4: a[4] + p.four,
+            6: a[6] + p.six,
+            50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
+            100: a[100] + p.run >= 100 ? 1 : 0
+          }
+          updateDoc(playerRef, {
+            Batting: Batting
+          });
+        })
+
+        inning1.bowlers.forEach((p, i) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+          const a = playersOfTeam1[String(p.name)].Bowling
+
+          const Bowling = {
+            Inn: a.Inn + 1,
+            B: a.B + Math.round(p.over) * 6 + (p.over * 10) % 10,
+            Runs: a.Runs + p.run,
+            Wkts: a.Wkts + p.wicket,
+            BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
+              {
+                W: p.wicket,
+                R: p.run
+              } :
+              a.BB,
+            Econ: ((a.Runs + p.run) / (a.B + Math.round(p.over) * 6 + (p.over * 10) % 10)) * 6,
+            Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
+            5: a[5] + p.wicket >= 5 ? 1 : 0
+          }
+
+          updateDoc(playerRef, {
+            Bowling: Bowling
+          });
+        })
+
+        // for inning2 players
+        inning2.batters.forEach((p, i) => {
+
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+          const a = playersOfTeam1[String(p.name)].Batting
+
+          const Batting = {
+            Inn: a.Inn + 1,
+            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            Runs: a.Runs + p.run,
+            Hs: Math.max(a.Hs, p.run),
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            BF: a.BF + p.ball,
+            SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
+            4: a[4] + p.four,
+            6: a[6] + p.six,
+            50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
+            100: a[100] + p.run >= 100 ? 1 : 0
+          }
+          updateDoc(playerRef, {
+            Batting: Batting
+          });
+        })
+
+        inning2.bowlers.forEach((p, i) => {
+          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+          const a = playersOfTeam2[String(p.name)].Bowling
+
+          const Bowling = {
+            Inn: a.Inn + 1,
+            B: a.B + Math.round(p.over) * 6 + (p.over * 10) % 10,
+            Runs: a.Runs + p.run,
+            Wkts: a.Wkts + p.wicket,
+            BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
+              {
+                W: p.wicket,
+                R: p.run
+              } :
+              a.BB,
+            Econ: ((a.Runs + p.run) / (a.B + Math.round(p.over) * 6 + (p.over * 10) % 10)) * 6,
+            Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
+            5: a[5] + p.wicket >= 5 ? 1 : 0
+          }
+
+          updateDoc(playerRef, {
+            Bowling: Bowling
+          });
+        })
+      }
+
     } catch (e) {
       console.error(e)
-      return false;
     }
 
   }
@@ -393,9 +498,9 @@ export default function ScoreBoard() {
     const endInningButton = document.getElementById('end-inning')
     if (endInningButton.textContent === 'Reset') {
       endInningButton.disabled = true;
-      
+
       updatePointTable()
-      
+
       setTimeout(() => {
         navigate(`/tournament/${tournament}`);
         localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
