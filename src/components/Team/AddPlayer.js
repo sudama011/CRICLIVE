@@ -21,8 +21,8 @@ export default function AddPlayer() {
     try {
       const values = {
         name: name.current.value,
+        M: 0,
         Batting: {
-          M: 0,
           Inn: 0,
           No: 0,
           Runs: 0,
@@ -36,7 +36,6 @@ export default function AddPlayer() {
           100: 0
         },
         Bowling: {
-          M: 0,
           Inn: 0,
           B: 0,
           Runs: 0,

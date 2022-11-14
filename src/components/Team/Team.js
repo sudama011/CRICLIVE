@@ -53,7 +53,6 @@ export default function Team() {
         </>
       }
 
-
       <ul className="list-group list-group-item-success">
         <h2>All Team players :</h2>
         {players.map((p, index) => (
@@ -61,9 +60,9 @@ export default function Team() {
 
             <button data-index={index} className="btn btn-info"
               onClick={handleClick}
-            >{p.name}</button>
+            >{index + 1}. {p.name}</button>
 
-            {isShown[index] && <Player Batting={p.Batting} Bowling={p.Bowling} />}
+            {isShown[index] && <Player M={p.M} Batting={p.Batting} Bowling={p.Bowling} />}
 
           </li>
         ))

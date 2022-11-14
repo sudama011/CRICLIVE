@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Player({ Batting, Bowling }) {
+export function Player({ M,Batting, Bowling }) {
 
   return (
     <>
@@ -28,7 +28,7 @@ export function Player({ Batting, Bowling }) {
             </thead>
             <tbody>
               <tr>
-                <td>{Batting.M}</td>
+                <td>{M}</td>
                 <td>{Batting.Inn}</td>
                 <td>{Batting.No}</td>
                 <td>{Batting.Runs}</td>
@@ -62,7 +62,7 @@ export function Player({ Batting, Bowling }) {
             </thead>
             <tbody>
               <tr>
-                <td>{Bowling.M}</td>
+                <td>{M}</td>
                 <td>{Bowling.Inn}</td>
                 <td>{Bowling.B}</td>
                 <td>{Bowling.Runs}</td>

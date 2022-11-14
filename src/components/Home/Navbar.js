@@ -1,7 +1,5 @@
 import React, { useContext } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-// eslint-disable-next-line 
-import logo from './logo-criclive.png'
 import { getAuth, signOut } from "firebase/auth";
 import { UserContext } from '../../context/userContext';
 
@@ -25,7 +23,6 @@ export default function Navbar() {
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark ">
-            {/* <img src={logo} className="bg-warning" alt="criclive" style={{ height: "40px", width: "60px" }} /> */}
             <Link to='/' className='h2 text-light nav-link'>criclive</Link>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,10 +51,10 @@ export default function Navbar() {
                     </li>}
 
                 </ul>
-                <form className="form-inline my-2 my-lg-0">
+                {/* <form className="form-inline my-2 my-lg-0">
                     <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
                     <button className="btn btn-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+                </form> */}
             </div>
         </nav >
     )

@@ -220,177 +220,186 @@ export default function ScoreBoard() {
   }, [extras, ballCount, hasMatchEnded, batter1, batter2, bowler, inningNo, match, isBatter1Edited, isBatter2Edited, isBowlerEdited]);
 
   // update team points NRR players stats after finishing match
-  const updatePointTable = () => {
-    if (inningNo === 1) return;
+  const updatePointTable = async () => {
+    try {
 
-    const task = async () => {
-      try {
+      const team1DocRef = doc(db, `tournaments/${tournament}/teams`, team1);
+      const team2DocRef = doc(db, `tournaments/${tournament}/teams`, team2);
+      const team1Details = (await getDoc(team1DocRef)).data();
+      const team2Details = (await getDoc(team2DocRef)).data();
+      const inning1 = match.inning1
+      const inning2 = match.inning2
 
-        const team1DocRef = doc(db, `tournaments/${tournament}/teams`, team1);
-        const team2DocRef = doc(db, `tournaments/${tournament}/teams`, team2);
-        const team1Details = (await getDoc(team1DocRef)).data();
-        const team2Details = (await getDoc(team2DocRef)).data();
-        const inning1 = match.inning1
-        const inning2 = match.inning2
+      team1Details.match = team1Details.match + 1
+      team2Details.match = team2Details.match + 1
 
-        team1Details.match = team1Details.match + 1
-        team2Details.match = team2Details.match + 1
-
-        let nrr = Math.round(((parseFloat(inning1.runRate) - parseFloat(inning2.runRate)) / 6) * 1000) / 1000;
-        team1Details.NRR = team1Details.NRR + nrr;
-        team2Details.NRR = team2Details.NRR - nrr;
-
-        if (inning1.runs === inning2.runs) {
-          // match Tied
-          team1Details.draw = team1Details.draw + 1
-          team2Details.draw = team2Details.draw + 1
-
-          team1Details.point = team1Details.point + 1
-          team2Details.point = team2Details.point + 1
-
-        } else if (inning1.runs > inning2.runs) {
-          // team1 won the match 
-          team1Details.win = team1Details.win + 1
-          team2Details.loss = team2Details.loss + 1
-
-          team1Details.point = team1Details.point + 2
-
-        } else {
-          // team2 won the match
-          team1Details.loss = team1Details.loss + 1
-          team2Details.win = team2Details.win + 1
-
-          team2Details.point = team2Details.point + 2
-        }
-        await updateDoc(team1DocRef, team1Details);
-        await updateDoc(team2DocRef, team2Details);
-
-        // update players stats
-        // playerListOfTeam1
-
-        const playersOfTeam1 = {}
-        const playersOfTeam2 = {}
-
-        playerListOfTeam1.forEach((player) => {
-          playersOfTeam1[player.name] = player;
-        })
-        playerListOfTeam2.forEach((player) => {
-          playersOfTeam2[player.name] = player;
-        })
-
-        // for inning1 players
-        inning1.batters.forEach((p) => {
-
-          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
-          const a = playersOfTeam1[p.name].Batting
-
-          const updatedInfo = {
-            Batting: {
-              M: a.M + 1,
-              Inn: a.Inn + 1,
-              No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
-              Runs: a.Runs + p.run,
-              Hs: Math.max(a.Hs, p.run),
-              Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
-              BF: a.BF + p.ball,
-              SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
-              4: a[4] + p.four,
-              6: a[6] + p.six,
-              50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
-              100: a[100] + p.run >= 100 ? 1 : 0
-            }
-          }
-          updateDoc(playerRef, updatedInfo);
-        })
-
-        inning1.bowlers.forEach((p, i) => {
-          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
-          const a = playersOfTeam2[p.name].Bowling
-
-          const updatedInfo = {
-            Bowling: {
-              M: a.M + 1,
-              Inn: a.Inn + 1,
-              B: a.B + p.over * 6, // check
-              Runs: a.Runs + p.run,
-              Wkts: a.Wkts + p.wicket,
-              BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
-                {
-                  W: p.wicket,
-                  R: p.run
-                } :
-                a.BB,
-              Econ: ((a.Runs + p.run) / (a.B + p.over * 6)) * 6,
-              Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
-              5: a[5] + p.wicket >= 5 ? 1 : 0
-            }
-          }
-          updateDoc(playerRef, updatedInfo);
-        })
-
-        // for inning2 players
-        inning2.batters.forEach((p, i) => {
-
-          const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
-          const a = playersOfTeam2[p.name].Batting
-
-          const updatedInfo = {
-            Batting: {
-              M: a.M + 1,
-              Inn: a.Inn + 1,
-              No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
-              Runs: a.Runs + p.run,
-              Hs: Math.max(a.Hs, p.run),
-              Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
-              BF: a.BF + p.ball,
-              SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
-              4: a[4] + p.four,
-              6: a[6] + p.six,
-              50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
-              100: a[100] + p.run >= 100 ? 1 : 0
-            }
-          }
-          updateDoc(playerRef, updatedInfo);
-        })
-
-        inning2.bowlers.forEach((p, i) => {
-          const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
-          const a = playersOfTeam1[p.name].Bowling
-
-          const updatedInfo = {
-            Bowling: {
-              M: a.M + 1,
-              Inn: a.Inn + 1,
-              B: a.B + p.over * 6, // check
-              Runs: a.Runs + p.run,
-              Wkts: a.Wkts + p.wicket,
-              BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
-                {
-                  W: p.wicket,
-                  R: p.run
-                } :
-                a.BB,
-              Econ: ((a.Runs + p.run) / (a.B + p.over * 6)) * 6,
-              Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
-              5: a[5] + p.wicket >= 5 ? 1 : 0
-            }
-          }
-          updateDoc(playerRef, updatedInfo);
-        })
-
-      } catch (e) {
-        console.error(e)
+      let nrr = parseFloat(inning1.runRate) - parseFloat(inning2.runRate);
+      if (batting === team1) {
+        team1Details.NRR = Math.round((team1Details.NRR + nrr) * 1000) / 1000;
+        team2Details.NRR = Math.round((team2Details.NRR - nrr) * 1000) / 1000;
       }
+      else {
+        team1Details.NRR = Math.round((team1Details.NRR - nrr) * 1000) / 1000;
+        team2Details.NRR = Math.round((team2Details.NRR + nrr) * 1000) / 1000;
+      }
+
+      if (inning1.runs === inning2.runs) {
+        // match Tied
+        team1Details.draw = team1Details.draw + 1
+        team2Details.draw = team2Details.draw + 1
+        team1Details.point = team1Details.point + 1
+        team2Details.point = team2Details.point + 1
+      } else if ((batting === team1 && inning1.runs > inning2.runs) ||
+        (batting === team2 && inning2.runs > inning1.runs)) {
+        // team1 won the match 
+        team1Details.win = team1Details.win + 1
+        team2Details.loss = team2Details.loss + 1
+        team1Details.point = team1Details.point + 2
+      } else {
+        // team2 won the match
+        team1Details.loss = team1Details.loss + 1
+        team2Details.win = team2Details.win + 1
+        team2Details.point = team2Details.point + 2
+      }
+      await updateDoc(team1DocRef, team1Details);
+      await updateDoc(team2DocRef, team2Details);
+
+      // update players stats
+      const playersOfTeam1 = {}
+      const playersOfTeam2 = {}
+
+      playerListOfTeam1.forEach((player) => {
+        playersOfTeam1[String(player.name)] = player;
+        const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, player.name);
+        console.log(player.Batting)
+        updateDoc(playerRef, {
+          M: player.M + 1
+        })
+      })
+      playerListOfTeam2.forEach((player) => {
+        playersOfTeam2[String(player.name)] = player;
+        const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, player.name);
+        updateDoc(playerRef, {
+          M: player.M + 1
+        })
+      })
+
+
+      // for inning1 players
+      inning1.batters.forEach((p) => {
+        const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+        const a = playersOfTeam1[String(p.name)].Batting
+
+        const updatedInfo = {
+          Batting: {
+            Inn: a.Inn + 1,
+            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            Runs: a.Runs + p.run,
+            Hs: Math.max(a.Hs, p.run),
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            BF: a.BF + p.ball,
+            SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
+            4: a[4] + p.four,
+            6: a[6] + p.six,
+            50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
+            100: a[100] + p.run >= 100 ? 1 : 0
+          }
+        }
+        updateDoc(playerRef, updatedInfo);
+      })
+
+      inning1.bowlers.forEach((p, i) => {
+        const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+        const a = playersOfTeam2[String(p.name)].Bowling
+
+        const updatedInfo = {
+          Bowling: {
+            Inn: a.Inn + 1,
+            B: a.B + Math.round(p.over) * 6 + (p.over * 10) % 10,
+            Runs: a.Runs + p.run,
+            Wkts: a.Wkts + p.wicket,
+            BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
+              {
+                W: p.wicket,
+                R: p.run
+              } :
+              a.BB,
+            Econ: ((a.Runs + p.run) / (a.B + Math.round(p.over) * 6 + (p.over * 10) % 10)) * 6,
+            Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
+            5: a[5] + p.wicket >= 5 ? 1 : 0
+          }
+        }
+        updateDoc(playerRef, updatedInfo);
+      })
+
+      // for inning2 players
+      inning2.batters.forEach((p, i) => {
+
+        const playerRef = doc(db, `tournaments/${tournament}/teams/${team2}/players`, p.name);
+        const a = playersOfTeam2[String(p.name)].Batting
+
+        const updatedInfo = {
+          Batting: {
+            Inn: a.Inn + 1,
+            No: a.No + p.BattingStatus === 'Batting' ? 1 : 0,
+            Runs: a.Runs + p.run,
+            Hs: Math.max(a.Hs, p.run),
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === 'Batting' ? 1 : 0))) * 100) / 100,
+            BF: a.BF + p.ball,
+            SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
+            4: a[4] + p.four,
+            6: a[6] + p.six,
+            50: a[50] + (p.run >= 50 && p.run < 99) ? 1 : 0,
+            100: a[100] + p.run >= 100 ? 1 : 0
+          }
+        }
+        updateDoc(playerRef, updatedInfo);
+      })
+
+      inning2.bowlers.forEach((p, i) => {
+        const playerRef = doc(db, `tournaments/${tournament}/teams/${team1}/players`, p.name);
+        const a = playersOfTeam1[String(p.name)].Bowling
+
+        const updatedInfo = {
+          Bowling: {
+            Inn: a.Inn + 1,
+            B: a.B + Math.round(p.over) * 6 + (p.over * 10) % 10,
+            Runs: a.Runs + p.run,
+            Wkts: a.Wkts + p.wicket,
+            BB: (p.wicket > a.Wkts || (p.wicket === a.Wkts && a.BB.R > p.run)) ?
+              {
+                W: p.wicket,
+                R: p.run
+              } :
+              a.BB,
+            Econ: ((a.Runs + p.run) / (a.B + Math.round(p.over) * 6 + (p.over * 10) % 10)) * 6,
+            Avg: Math.round(((a.Runs + p.run) / Math.max(1, (a.Wkts + p.wicket))) * 100) / 100,
+            5: a[5] + p.wicket >= 5 ? 1 : 0
+          }
+        }
+        updateDoc(playerRef, updatedInfo);
+      })
+
+      return true;
+    } catch (e) {
+      console.error(e)
+      return false;
     }
-    task()
+
   }
 
 
   const handleEndInning = (e) => {
     const endInningButton = document.getElementById('end-inning')
     if (endInningButton.textContent === 'Reset') {
-      updatePointTable();
-      navigate(`/tournament/${tournament}`);
+      endInningButton.disabled = true;
+      
+      updatePointTable()
+      
+      setTimeout(() => {
+        navigate(`/tournament/${tournament}`);
+        localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
+      }, 2500);
     }
 
     if (batter1.name !== undefined && batter1.name !== '') {
@@ -512,7 +521,6 @@ export default function ScoreBoard() {
       updateMatch()
       endInningButton.textContent = 'Reset'
       setMatchEnded(true)
-      localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
     }
   }
 

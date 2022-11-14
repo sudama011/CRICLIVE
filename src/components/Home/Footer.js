@@ -16,7 +16,10 @@ export default function Footer() {
                             </h6>
                             <p>
                                 <FaHome />
-                                MNIT, JAIPUR 302017, RAJASTHAN INDIA
+                                MNIT, JAIPUR 302017,
+                            </p>
+                            <p>
+                               RAJASTHAN INDIA
                             </p>
                             <p>
                                 <FaEnvelope />
