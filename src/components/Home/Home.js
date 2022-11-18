@@ -36,7 +36,7 @@ function Home() {
         const tournamentList = tournaments.map((t, index) =>
             <tr key={index}>
                 <td>
-                    <Link to={`/tournament/${t.name}`}>
+                    <Link to={`/tournament/${t.name}`} state={{ organiser: t.organiser }}>
                         <button type="button" className="btn btn-info">{t.name}</button>
                     </Link>
                 </td>

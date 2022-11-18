@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { Player } from './Player';
-import { UserContext } from "../../context/userContext";
+import { UserContext  } from "../../context/userContext";
 export default function Team() {
+  const organiser = (useLocation().state).organiser;
   const { user } = useContext(UserContext);
   const { tournament, team } = useParams();
 
@@ -43,7 +44,7 @@ export default function Team() {
       <h5>Playing in tournament : {tournament}</h5>
 
       <br />
-      {user.uid &&
+      {user.uid===organiser.uid &&
         <>
           <Link to={`/tournament/${tournament}/${team}/addplayer`}>
             <button type="button" className="btn btn-info">Add New Player</button>

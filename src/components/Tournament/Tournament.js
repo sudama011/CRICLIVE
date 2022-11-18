@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 
 export default function Tournament() {
+  const organiser = (useLocation().state).organiser;
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const { tournament } = useParams();
@@ -90,7 +91,7 @@ export default function Tournament() {
     return teams.map((t, index) => (
       <tr key={index}>
         <td>
-          <Link to={`/tournament/${tournament}/${t.name}`}>
+          <Link to={`/tournament/${tournament}/${t.name}`} state={{ organiser: organiser }}>
             <button className="btn btn-info">{t.name}</button>
           </Link>
         </td>
@@ -110,12 +111,13 @@ export default function Tournament() {
       <tr key={index}>
         <td>
           {
-            user.uid ?
-              <Link to={t.hasMatchEnded ? '/match/live-score' : t.maxOver ? '/match/score' : '/match'} state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
+            user.uid === organiser.uid ?
+              <Link to={t.hasMatchEnded ? '/match/live-score' : t.maxOver ? '/match/score' : '/match'}
+                state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
                 <button type="button" className="btn btn-info">{t.id}</button>
               </Link>
               :
-              <Link to='/match/live-score' state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament }}>
+              <Link to='/match/live-score' state={{ matchid: t.id, team1: t.team1, team2: t.team2, tournament: tournament, organiser: organiser }}>
                 <button type="button" className="btn btn-info">{t.id}</button>
               </Link>
           }
@@ -157,7 +159,7 @@ export default function Tournament() {
       </div>
 
       <br />
-      {user.uid &&
+      {user.uid === organiser.uid &&
         <div>
           <Link to={`/tournament/${tournament}/addteam`}>
             <button type="button" className="btn btn-info">Add Team</button>

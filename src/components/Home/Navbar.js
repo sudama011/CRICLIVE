@@ -32,21 +32,21 @@ export default function Navbar() {
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto ">
 
-                    {!user.name && <li className="nav-item" style={{ margin: "6px" }}>
+                    <li className="nav-item" style={{ margin: "6px" }}>
                         <Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to='/'>Home</Link>
-                    </li>}
+                    </li>
 
-                    {!user.name &&
+                    {!user.uid &&
                         < li className="nav-item" style={{ margin: "6px" }}>
                             <Link className={`nav-link ${location.pathname === '/login' ? 'active' : ''}`} to="/login">Login</Link>
                         </li>}
 
 
-                    {user.name && <li className="nav-item" style={{ margin: "6px" }} >
+                    {user.uid && <li className="nav-item" style={{ margin: "6px" }} >
                         <Link className={`nav-link ${location.pathname === '/logout' ? 'active' : ''}`} to="/logout" onClick={handleLogout} >Logout</Link>
                     </li>}
 
-                    {user.name && <li className="nav-item" style={{ margin: "6px" }}>
+                    {user.uid && <li className="nav-item" style={{ margin: "6px" }}>
                         <Link className={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`} to="/profile">Profile</Link>
                     </li>}
 
