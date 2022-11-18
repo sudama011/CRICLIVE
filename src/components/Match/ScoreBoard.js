@@ -859,7 +859,13 @@ export default function ScoreBoard() {
     const batter1NameElement = document.getElementById('batter1Name')
     batter1NameElement.value = ''
     batter1NameElement.disabled = false
-    const { name, run, ball, four, six, strikeRate, onStrike } = batter1
+    let { name, run, ball, four, six, strikeRate, onStrike } = batter1
+    if (onStrike) {
+      ball = ball + 1
+    }
+    else {
+      setBatter2((state) => ({ ...state, ball: state.ball + 1 }))
+    }
     setBatters((state) => [
       ...state,
       {
@@ -881,7 +887,13 @@ export default function ScoreBoard() {
     const batter2NameElement = document.getElementById('batter2Name')
     batter2NameElement.value = ''
     batter2NameElement.disabled = false
-    const { name, run, ball, four, six, strikeRate, onStrike } = batter2
+    let { name, run, ball, four, six, strikeRate, onStrike } = batter2
+    if (onStrike) {
+      ball = ball + 1
+    }
+    else {
+      setBatter1((state) => ({ ...state, ball: state.ball + 1 }))
+    }
     setBatters((state) => [
       ...state,
       {
@@ -928,8 +940,12 @@ export default function ScoreBoard() {
     }
     setWicketCount(wicketCount - 1)
     const batter = batters[batters.length - 1]
-    const { name, run, ball, four, six, strikeRate, onStrike } = batter
+    let { name, run, ball, four, six, strikeRate, onStrike } = batter
     if (batter1.name === undefined || batter1.onStrike) {
+      if (onStrike) ball = ball - 1
+      else {
+        setBatter2((state) => ({ ...state, ball: state.ball - 1 }))
+      }
       const batter1NameElement = document.getElementById('batter1Name')
       batter1NameElement.value = batter.name
       batter1NameElement.disabled = true
@@ -952,6 +968,10 @@ export default function ScoreBoard() {
         }))
       }
     } else if (batter2.name === undefined || batter2.onStrike) {
+      if (onStrike) ball = ball - 1
+      else {
+        setBatter1((state) => ({ ...state, ball: state.ball - 1 }))
+      }
       const batter2NameElement = document.getElementById('batter2Name')
       batter2NameElement.value = batter.name
       batter2NameElement.disabled = true
@@ -1272,6 +1292,12 @@ export default function ScoreBoard() {
       }
     }
   }
+  useEffect(() => {
+    console.log(batter1)
+    console.log(batter2)
+    console.log(batters)
+  }, [batter1, batter2, batters])
+
   const handleNoBall = () => {
     if (inningNo === 2) {
       setRemainingRuns(remainingRuns - 1)
@@ -1318,7 +1344,6 @@ export default function ScoreBoard() {
     }
   }
   const handleWicket = (isRunOut, playerName) => {
-    handleRun(0)
     setRunOutPlayerName('')
     setRemainingBalls(remainingBalls - 1)
     if (ballCount === 5) {
