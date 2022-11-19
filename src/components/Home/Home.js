@@ -53,8 +53,7 @@ function Home() {
     }
 
     return (
-        <div>
-
+        <ul className='p-0'>
             <li className="list-group-item list-group-item-success">
                 <h3>All Tournaments</h3>
                 <div style={{ overflowX: "scroll" }}>
@@ -80,7 +79,7 @@ function Home() {
                 </div>
 
             </li>
-        </div>
+        </ul>
     )
 }
 

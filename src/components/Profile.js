@@ -43,7 +43,7 @@ export default function Profile() {
     const tournamentList = tournaments.map((t, index) =>
       <tr key={index}>
         <td>
-          <Link to={`/tournament/${t.name}`} state={{organiser:user}}>
+          <Link to={`/tournament/${t.name}`} state={{ organiser: user }}>
             <button type="button" className="btn btn-info">{t.name}</button>
           </Link>
         </td>
@@ -67,32 +67,33 @@ export default function Profile() {
       </form>
       <br />
 
+      <ul className='p-0'>
+        <li className="list-group-item list-group-item-success p-0">
+          <h3>Your Tournaments</h3>
+          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
+            <table className="table table-info">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Prize</th>
+                  <th>Village</th>
+                  <th>City</th>
+                  <th>State</th>
+                </tr>
+              </thead>
 
-      <li className="list-group-item list-group-item-success">
-        <h3>Your Tournaments</h3>
-        <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-          <table className="table table-info">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Prize</th>
-                <th>Village</th>
-                <th>City</th>
-                <th>State</th>
-              </tr>
-            </thead>
+              <tbody>
 
-            <tbody>
+                {getBody(tournaments)}
 
-              {getBody(tournaments)}
+              </tbody>
 
-            </tbody>
-
-          </table>
-        </div>
-      </li>
+            </table>
+          </div>
+        </li>
+      </ul>
     </div >
   )
 }

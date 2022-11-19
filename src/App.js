@@ -2,14 +2,11 @@ import React, { useEffect, lazy, Suspense, useContext } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { auth } from "./firebase";
 
-import { ThemeProvider } from '@material-ui/core'
-import { theme } from './components/Match/ui/Theme'
-import Container from './components/Match/Container'
 import { UserContext } from './context/userContext';
-
-import Footer from './components/Home/Footer';
 import Navbar from './components/Home/Navbar';
-import Home from './components/Home/Home';
+
+const Home = lazy(() => import('./components/Home/Home'));
+const Footer = lazy(() => import('./components/Home/Footer'));
 
 const Signup = lazy(() => import('./components/Signup'));
 const Login = lazy(() => import('./components/Login'));
@@ -23,6 +20,9 @@ const ScheduleMatch = lazy(() => import('./components/Tournament/ScheduleMatch')
 const Team = lazy(() => import('./components/Team/Team'));
 const AddPlayer = lazy(() => import('./components/Team/AddPlayer'));
 
+const ThemeProvider = lazy(() => import('@material-ui/core'));
+const theme = lazy(() => import('./components/Match/ui/Theme'));
+const Container = lazy(() => import('./components/Match/Container'));
 
 function App() {
 
@@ -42,7 +42,7 @@ function App() {
 
         <Routes>
 
-          <Route exact path="/" element={<Home />} />
+          <Route exact path="/" element={<Suspense><Home /></Suspense>} />
           <Route exact path="/signup" element={<Suspense><Signup /></Suspense>} />
           <Route exact path="/login" element={<Suspense><Login /></Suspense>} />
           <Route exact path="/profile" element={<Suspense><Profile /></Suspense>} />
@@ -60,7 +60,7 @@ function App() {
 
         </Routes>
 
-        <Footer />
+        <Suspense><Footer /></Suspense>
       </BrowserRouter>
 
     </>
