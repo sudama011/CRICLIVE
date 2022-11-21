@@ -262,10 +262,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
+            No: a.No + (p.battingStatus === BATTING ? 1 : 0),
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + (p.battingStatus === BATTING ? 1 : 0)))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -311,10 +311,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
+            No: a.No + (p.battingStatus === BATTING ? 1 : 0),
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + (p.battingStatus === BATTING ? 1 : 0)))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -362,10 +362,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
+            No: a.No + (p.battingStatus === BATTING ? 1 : 0),
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + (p.battingStatus === BATTING ? 1 : 0)))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -411,10 +411,10 @@ export default function ScoreBoard() {
 
           const Batting = {
             Inn: a.Inn + 1,
-            No: a.No + p.BattingStatus === BATTING ? 1 : 0,
+            No: a.No + (p.battingStatus === BATTING ? 1 : 0),
             Runs: a.Runs + p.run,
             Hs: Math.max(a.Hs, p.run),
-            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + p.BattingStatus === BATTING ? 1 : 0))) * 100) / 100,
+            Avg: Math.round((a.Runs + p.run) / Math.max(1, (a.Inn + 1 - (a.No + (p.battingStatus === BATTING ? 1 : 0)))) * 100) / 100,
             BF: a.BF + p.ball,
             SR: Math.round(((a.Runs + p.run) / (a.BF + p.ball)) * 10000) / 100,
             4: a[4] + p.four,
@@ -460,7 +460,7 @@ export default function ScoreBoard() {
   }
 
 
-  const handleEndInning = (e) => {
+  const handleEndInning = () => {
     const endInningButton = document.getElementById('end-inning')
     if (endInningButton.textContent === 'Reset') {
       endInningButton.disabled = true;
@@ -470,7 +470,8 @@ export default function ScoreBoard() {
 
       setTimeout(() => {
         navigate(`/tournament/${tournament}`);
-      }, 2000);
+      }, 1000);
+      return
     }
 
     if (batter1.name !== undefined) {
