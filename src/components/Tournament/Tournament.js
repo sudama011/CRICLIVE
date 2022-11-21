@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { db } from '../../firebase';
 import { collection, query, onSnapshot } from "firebase/firestore";
-import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 
 export default function Tournament() {
-  const organiser = (useLocation().state).organiser;
+  const organiser = JSON.parse(localStorage.getItem('organiser'));
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const { tournament } = useParams();

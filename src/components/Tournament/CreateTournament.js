@@ -38,7 +38,7 @@ function CreateTournament() {
       }
       await setDoc(doc(db, 'tournaments', values.name), values);
 
-      alert("Tournament Created Successfully");
+      // alert("Tournament Created Successfully");
       navigate("/profile");
     } catch (err) {
       console.log(err)

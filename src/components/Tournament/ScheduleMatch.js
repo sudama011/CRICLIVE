@@ -40,7 +40,7 @@ export default function ScheduleMatch() {
       }
       await setDoc(doc(db, `tournaments/${tournament}/matches`, values.id), values);
 
-      alert("Match Scheduled Successfully");
+      // alert("Match Scheduled Successfully");
       navigate(`/tournament/${tournament}`);
 
     } catch (err) {

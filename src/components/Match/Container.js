@@ -1,17 +1,17 @@
-import React, { lazy, Suspense } from 'react'
+import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import NotFound from './NotFound'
 import StepperContainer from './StepperContainer'
-const ScoreBoard = lazy(() => import('./ScoreBoard'));
-const ScoreBoard2 = lazy(() => import('./ScoreBoard2'));
+import ScoreBoard from './ScoreBoard';
+import ScoreBoard2 from './ScoreBoard2';
 
 export default function Container() {
   return (
     <>
       <Routes>
         <Route exact path='/' element={<StepperContainer />} />
-        <Route exact path='/score' element={<Suspense><ScoreBoard /></Suspense>} />
-        <Route exact path='/live-score' element={<Suspense><ScoreBoard2 /></Suspense>} />
+        <Route exact path='/score' element={<ScoreBoard />} />
+        <Route exact path='/live-score' element={<ScoreBoard2 />} />
         <Route path='/*' element={<NotFound />} />
       </Routes>
     </>

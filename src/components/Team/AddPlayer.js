@@ -51,7 +51,7 @@ export default function AddPlayer() {
       }
       await setDoc(doc(db, `tournaments/${tournament}/teams/${team}/players`, values.name), values);
 
-      alert("Player Added Successfully");
+      // alert("Player Added Successfully");
       navigate(`/tournament/${tournament}/${team}`);
     } catch (err) {
       console.log(err)

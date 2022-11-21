@@ -1,5 +1,7 @@
 import React, { useEffect, lazy, Suspense, useContext } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from '@material-ui/core';
+import { theme } from './components/Match/ui/Theme';
 import { auth } from "./firebase";
 
 import { UserContext } from './context/userContext';
@@ -20,8 +22,6 @@ const ScheduleMatch = lazy(() => import('./components/Tournament/ScheduleMatch')
 const Team = lazy(() => import('./components/Team/Team'));
 const AddPlayer = lazy(() => import('./components/Team/AddPlayer'));
 
-const ThemeProvider = lazy(() => import('@material-ui/core'));
-const theme = lazy(() => import('./components/Match/ui/Theme'));
 const Container = lazy(() => import('./components/Match/Container'));
 
 function App() {
@@ -54,9 +54,9 @@ function App() {
 
           <Route exact path="/tournament/:tournament/:team" element={<Suspense><Team /></Suspense>} />
           <Route exact path="/tournament/:tournament/:team/addplayer" element={<Suspense><AddPlayer /></Suspense>} />
-          <Route exact path="/match/*" element={<Suspense><ThemeProvider theme={theme}>
-            <Container />
-          </ThemeProvider></Suspense>} />
+          <Route exact path="/match/*" element={<ThemeProvider theme={theme}>
+            <Suspense><Container /></Suspense>
+          </ThemeProvider>} />
 
         </Routes>
 

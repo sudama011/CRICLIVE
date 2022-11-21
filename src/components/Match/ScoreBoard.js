@@ -16,7 +16,7 @@ import { BOLD, CATCH, HIT_WICKET, RUN_OUT, STUMP } from './constants/OutType'
 import './ScoreBoard.css'
 import { radioGroupBoxstyle } from './ui/RadioGroupBoxStyle'
 import { db } from '../../firebase';
-import { updateDoc, doc, getDoc, query, collection, onSnapshot } from 'firebase/firestore';
+import { updateDoc, doc, getDoc } from 'firebase/firestore';
 
 export default function ScoreBoard() {
 
@@ -75,6 +75,8 @@ export default function ScoreBoard() {
         let data = JSON.parse(localStorage.getItem(`tournament_${tournament}_match_${matchid}`));
 
         if (data) {
+          if (data.playerListOfTeam1) await setPlayerListOfTeam1(data.playerListOfTeam1);
+          if (data.playerListOfTeam2) await setPlayerListOfTeam2(data.playerListOfTeam2);
           if (data.inningNo) await setInningNo(data.inningNo);
           if (data.match) await setMatch(data.match);
           if (data.currentRunStack) await setCurrentRunStack(data.currentRunStack);
@@ -122,44 +124,6 @@ export default function ScoreBoard() {
 
   }, []);
 
-  // fetch player list from server
-  useEffect(() => {
-
-    if (isLocalStorageLoaded) {
-      const task = async () => {
-        try {
-
-          const q1 = query(collection(db, `tournaments/${tournament}/teams/${team1}/players`));
-          const q2 = query(collection(db, `tournaments/${tournament}/teams/${team2}/players`));
-
-          const unsubscribe1 = await onSnapshot(q1, (querySnapshot) => {
-            let arr = []
-            querySnapshot.forEach((t) => {
-              arr.push(t.data());
-            })
-            setPlayerListOfTeam1(arr);
-          })
-
-          const unsubscribe2 = await onSnapshot(q2, (querySnapshot) => {
-            let arr = []
-            querySnapshot.forEach((t) => {
-              arr.push(t.data());
-            })
-            setPlayerListOfTeam2(arr);
-          })
-
-          setTimeout(() => {
-            unsubscribe1()
-            unsubscribe2()
-          }, 2000)
-
-        } catch (e) {
-
-        }
-      }
-      task()
-    }
-  }, [isLocalStorageLoaded]);
 
   // set select option according to prev values
   useEffect(() => {
@@ -186,6 +150,8 @@ export default function ScoreBoard() {
     if (isLocalStorageLoaded) {
       localStorage.setItem(`tournament_${tournament}_match_${matchid}`, JSON.stringify(
         {
+          playerListOfTeam1,
+          playerListOfTeam2,
           inningNo,
           match,
           currentRunStack,
@@ -500,11 +466,11 @@ export default function ScoreBoard() {
       endInningButton.disabled = true;
 
       updatePointTable()
+      localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
 
       setTimeout(() => {
         navigate(`/tournament/${tournament}`);
-        localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
-      }, 2500);
+      }, 2000);
     }
 
     if (batter1.name !== undefined) {
@@ -628,8 +594,8 @@ export default function ScoreBoard() {
         }
       }
     }
-    updateMatch()
     if (inningNo === 1) {
+      updateMatch()
       setInningNo(2)
       setCurrentRunStack([])
       setTotalRuns(0)
@@ -660,6 +626,7 @@ export default function ScoreBoard() {
       setStrikeValue('strike')
       endInningButton.disabled = true
     } else {
+      updateMatch()
       endInningButton.textContent = 'Reset'
       setMatchEnded(true)
     }
@@ -714,6 +681,9 @@ export default function ScoreBoard() {
       })
     }
   }
+  useEffect(() => {
+    updateMatch()
+  }, [batters, bowlers])
 
   const handleBatter1Blur = (e) => {
     let name = e.target.value
@@ -738,7 +708,6 @@ export default function ScoreBoard() {
       })
       setBattingOrder(battingOrder + 1)
     }
-    updateMatch()
   }
   const handleBatter2Blur = (e) => {
     let name = e.target.value
@@ -763,7 +732,6 @@ export default function ScoreBoard() {
       })
       setBattingOrder(battingOrder + 1)
     }
-    updateMatch()
   }
   const handleBowlerBlur = (e) => {
     let name = e.target.value
@@ -781,7 +749,6 @@ export default function ScoreBoard() {
         name,
       })
     }
-    updateMatch()
   }
 
 
@@ -853,7 +820,6 @@ export default function ScoreBoard() {
         },
       ])
     }
-    updateMatch()
   }
   const newBatter1 = () => {
     const batter1NameElement = document.getElementById('batter1Name')
@@ -881,7 +847,6 @@ export default function ScoreBoard() {
       },
     ])
     setBatter1({})
-    updateMatch()
   }
   const newBatter2 = () => {
     const batter2NameElement = document.getElementById('batter2Name')
@@ -909,7 +874,6 @@ export default function ScoreBoard() {
       },
     ])
     setBatter2({})
-    updateMatch()
   }
   const editBatter1Name = () => {
     if (overCount !== maxOver && wicketCount !== 10 && !hasMatchEnded) {
@@ -996,7 +960,6 @@ export default function ScoreBoard() {
     }
     batters.pop()
     setBatters(batters)
-    updateMatch()
   }
 
   const undoRun = (run, isNoBallParam) => {
@@ -1013,103 +976,111 @@ export default function ScoreBoard() {
     }
     if (batter1.onStrike) {
       if (run % 2 === 0) {
-        setBatter1((state) => {
-          const updatedRun = state.run - run
-          const updatedBall = state.ball - 1
-          const updatedSr = updatedRun / updatedBall
-          const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
-          let four = state.four
-          if (run === 4) {
-            four = four - 1
-          }
-          let six = state.six
-          if (run === 6) {
-            six = six - 1
-          }
-          return {
-            ...state,
-            run: updatedRun,
-            ball: updatedBall,
-            four: four,
-            six: six,
-            strikeRate: sr,
-          }
-        })
+        if (!isNoBallParam) {
+          setBatter1((state) => {
+            const updatedRun = state.run - run
+            const updatedBall = state.ball - 1
+            const updatedSr = updatedRun / updatedBall
+            const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
+            let four = state.four
+            if (run === 4) {
+              four = four - 1
+            }
+            let six = state.six
+            if (run === 6) {
+              six = six - 1
+            }
+            return {
+              ...state,
+              run: updatedRun,
+              ball: updatedBall,
+              four: four,
+              six: six,
+              strikeRate: sr,
+            }
+          })
+        }
       } else {
         changeStrikeRadio()
         switchBatterStrike()
-        setBatter2((state) => {
-          const updatedRun = state.run - run
-          const updatedBall = state.ball - 1
-          const updatedSr = updatedRun / updatedBall
-          const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
-          let four = state.four
-          if (run === 4) {
-            four = four - 1
-          }
-          let six = state.six
-          if (run === 6) {
-            six = six - 1
-          }
-          return {
-            ...state,
-            run: updatedRun,
-            ball: updatedBall,
-            four: four,
-            six: six,
-            strikeRate: sr,
-          }
-        })
+        if (!isNoBallParam) {
+          setBatter2((state) => {
+            const updatedRun = state.run - run
+            const updatedBall = state.ball - 1
+            const updatedSr = updatedRun / updatedBall
+            const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
+            let four = state.four
+            if (run === 4) {
+              four = four - 1
+            }
+            let six = state.six
+            if (run === 6) {
+              six = six - 1
+            }
+            return {
+              ...state,
+              run: updatedRun,
+              ball: updatedBall,
+              four: four,
+              six: six,
+              strikeRate: sr,
+            }
+          })
+        }
       }
     } else if (batter2.onStrike) {
       if (run % 2 === 0) {
-        setBatter2((state) => {
-          const updatedRun = state.run - run
-          const updatedBall = state.ball - 1
-          const updatedSr = updatedRun / updatedBall
-          const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
-          let four = state.four
-          if (run === 4) {
-            four = four - 1
-          }
-          let six = state.six
-          if (run === 6) {
-            six = six - 1
-          }
-          return {
-            ...state,
-            run: updatedRun,
-            ball: updatedBall,
-            four: four,
-            six: six,
-            strikeRate: sr,
-          }
-        })
+        if (!isNoBallParam) {
+          setBatter2((state) => {
+            const updatedRun = state.run - run
+            const updatedBall = state.ball - 1
+            const updatedSr = updatedRun / updatedBall
+            const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
+            let four = state.four
+            if (run === 4) {
+              four = four - 1
+            }
+            let six = state.six
+            if (run === 6) {
+              six = six - 1
+            }
+            return {
+              ...state,
+              run: updatedRun,
+              ball: updatedBall,
+              four: four,
+              six: six,
+              strikeRate: sr,
+            }
+          })
+        }
       } else {
         changeStrikeRadio()
         switchBatterStrike()
-        setBatter1((state) => {
-          const updatedRun = state.run - run
-          const updatedBall = state.ball - 1
-          const updatedSr = updatedRun / updatedBall
-          const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
-          let four = state.four
-          if (run === 4) {
-            four = four - 1
-          }
-          let six = state.six
-          if (run === 6) {
-            six = six - 1
-          }
-          return {
-            ...state,
-            run: updatedRun,
-            ball: updatedBall,
-            four: four,
-            six: six,
-            strikeRate: sr,
-          }
-        })
+        if (!isNoBallParam) {
+          setBatter1((state) => {
+            const updatedRun = state.run - run
+            const updatedBall = state.ball - 1
+            const updatedSr = updatedRun / updatedBall
+            const sr = Math.round(isNaN(updatedSr) ? 0 : updatedSr * 100 * 100) / 100
+            let four = state.four
+            if (run === 4) {
+              four = four - 1
+            }
+            let six = state.six
+            if (run === 6) {
+              six = six - 1
+            }
+            return {
+              ...state,
+              run: updatedRun,
+              ball: updatedBall,
+              four: four,
+              six: six,
+              strikeRate: sr,
+            }
+          })
+        }
       }
     }
   }
@@ -1235,27 +1206,29 @@ export default function ScoreBoard() {
       }
     }
     if (batter1.onStrike) {
-      setBatter1((state) => {
-        const updatedRun = state.run + run
-        const updatedBall = state.ball + 1
-        const sr = Math.round((updatedRun / updatedBall) * 100 * 100) / 100
-        let four = state.four
-        if (run === 4) {
-          four = four + 1
-        }
-        let six = state.six
-        if (run === 6) {
-          six = six + 1
-        }
-        return {
-          ...state,
-          run: updatedRun,
-          ball: updatedBall,
-          four: four,
-          six: six,
-          strikeRate: sr,
-        }
-      })
+      if (!isNoBall) {
+        setBatter1((state) => {
+          const updatedRun = state.run + run
+          const updatedBall = state.ball + 1
+          const sr = Math.round((updatedRun / updatedBall) * 100 * 100) / 100
+          let four = state.four
+          if (run === 4) {
+            four = four + 1
+          }
+          let six = state.six
+          if (run === 6) {
+            six = six + 1
+          }
+          return {
+            ...state,
+            run: updatedRun,
+            ball: updatedBall,
+            four: four,
+            six: six,
+            strikeRate: sr,
+          }
+        })
+      }
       if (isNoBall) {
         if (run % 2 !== 0) {
           switchBatterStrike()
@@ -1266,37 +1239,34 @@ export default function ScoreBoard() {
         }
       }
     } else {
-      setBatter2((state) => {
-        const updatedRun = state.run + run
-        const updatedBall = state.ball + 1
-        const sr = Math.round((updatedRun / updatedBall) * 100 * 100) / 100
-        let four = state.four
-        if (run === 4) {
-          four = four + 1
-        }
-        let six = state.six
-        if (run === 6) {
-          six = six + 1
-        }
-        return {
-          ...state,
-          run: updatedRun,
-          ball: updatedBall,
-          four: four,
-          six: six,
-          strikeRate: sr,
-        }
-      })
+      if (!isNoBall) {
+        setBatter2((state) => {
+          const updatedRun = state.run + run
+          const updatedBall = state.ball + 1
+          const sr = Math.round((updatedRun / updatedBall) * 100 * 100) / 100
+          let four = state.four
+          if (run === 4) {
+            four = four + 1
+          }
+          let six = state.six
+          if (run === 6) {
+            six = six + 1
+          }
+          return {
+            ...state,
+            run: updatedRun,
+            ball: updatedBall,
+            four: four,
+            six: six,
+            strikeRate: sr,
+          }
+        })
+      }
       if ((ballCount === 5 && run % 2 === 0) || (ballCount !== 5 && run % 2 !== 0)) {
         switchBatterStrike()
       }
     }
   }
-  useEffect(() => {
-    console.log(batter1)
-    console.log(batter2)
-    console.log(batters)
-  }, [batter1, batter2, batters])
 
   const handleNoBall = () => {
     if (inningNo === 2) {

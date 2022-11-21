@@ -43,8 +43,9 @@ export default function Profile() {
     const tournamentList = tournaments.map((t, index) =>
       <tr key={index}>
         <td>
-          <Link to={`/tournament/${t.name}`} state={{ organiser: user }}>
-            <button type="button" className="btn btn-info">{t.name}</button>
+          <Link to={`/tournament/${t.name}`}>
+            <button type="button" className="btn btn-info"
+              onClick={() => localStorage.setItem('organiser', JSON.stringify(t.organiser))}>{t.name}</button>
           </Link>
         </td>
         <td>{t.startDate}</td>

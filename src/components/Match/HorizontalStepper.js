@@ -11,9 +11,11 @@ import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import { Formik } from 'formik'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import * as Yup from 'yup'
+import { db } from '../../firebase';
+import { query, collection, onSnapshot } from 'firebase/firestore';
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
@@ -64,6 +66,42 @@ const HorizontalStepper = () => {
   const match = useLocation().state;
   const tournament = match.tournament;
   const matchid = match.matchid;
+  const team1 = match.team1;
+  const team2 = match.team2;
+  
+  const [playerListOfTeam1, setPlayerListOfTeam1] = useState([])
+  const [playerListOfTeam2, setPlayerListOfTeam2] = useState([])
+  // fetch player list from server
+  useEffect(() => {
+
+    const task = async () => {
+      try {
+        const q1 = query(collection(db, `tournaments/${tournament}/teams/${team1}/players`));
+        const q2 = query(collection(db, `tournaments/${tournament}/teams/${team2}/players`));
+
+        onSnapshot(q1, (querySnapshot) => {
+          let arr = []
+          querySnapshot.forEach((t) => {
+            arr.push(t.data());
+          })
+          setPlayerListOfTeam1(arr);
+        })
+
+        onSnapshot(q2, (querySnapshot) => {
+          let arr = []
+          querySnapshot.forEach((t) => {
+            arr.push(t.data());
+          })
+          setPlayerListOfTeam2(arr);
+        })
+
+      } catch (e) {
+
+      }
+    }
+    task()
+
+  }, []);
 
   const navigate = useNavigate()
   const classes = useStyles()
@@ -78,10 +116,12 @@ const HorizontalStepper = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
   }
   const initialValues = {
-    team1: match.team1,
-    team2: match.team2,
+    team1,
+    team2,
     maxOver: 4,
     batting: '',
+    playerListOfTeam1,
+    playerListOfTeam2
   }
   const validationSchema = [
     Yup.object().shape({
@@ -122,7 +162,7 @@ const HorizontalStepper = () => {
 
               localStorage.setItem(`tournament_${tournament}_match_${matchid}`,
                 JSON.stringify(values));
-              
+
               navigate('/match/score', { state: { ...match } })
               setSubmitting(false)
             }
