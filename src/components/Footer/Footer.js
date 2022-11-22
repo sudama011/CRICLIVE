@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 import { MDBFooter, MDBContainer, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
 import { FaFacebookSquare, FaLinkedin, FaInstagramSquare, FaTwitterSquare, FaHome, FaEnvelope, FaPhone } from "react-icons/fa";
 
@@ -61,33 +62,13 @@ export default function Footer() {
 
                     <MDBCol md="3" lg="2" xl="2" className='mx-auto mb-2'>
                         <div className='h6 text-uppercase fw-bold mb-4'>COMPANY</div>
-                        <p>
-                            <a href='#!' title='Careers'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                Careers
-                            </a>
-                        </p>
-                        <p>
-                            <a href='#!' title='Advertise'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                Advertise
-                            </a>
 
-                        </p>
-                        <p>
-                            <a href='#!' title='Privacy Policy'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                Privacy Policy
-                            </a>
+                        <Link className='active nav-link me-4 text-white' to='/footer/faq' title='Frequently Asked Questions'>FAQ</Link>
+                        <Link className='active nav-link me-4 text-white' to='/footer/suggestion'>Suggestion</Link>
+                        <Link className='active nav-link me-4 text-white' to='/footer/complaint'>Complaint</Link>
+                        <Link className='active nav-link me-4 text-white' to='/footer/privacy policy'>Privacy Policy</Link>
+                        <Link className='active nav-link me-4 text-white' to='/footer/terms of use'>Terms of Use</Link>
 
-                        </p>
-                        <p>
-                            <a href='#!' title='Terms of Use'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                Terms of Use
-                            </a>
-
-                        </p>
                     </MDBCol>
 
 

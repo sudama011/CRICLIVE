@@ -68,7 +68,7 @@ const HorizontalStepper = () => {
   const matchid = match.matchid;
   const team1 = match.team1;
   const team2 = match.team2;
-  
+
   const [playerListOfTeam1, setPlayerListOfTeam1] = useState([])
   const [playerListOfTeam2, setPlayerListOfTeam2] = useState([])
   // fetch player list from server
@@ -158,6 +158,10 @@ const HorizontalStepper = () => {
             actions.setTouched({})
             actions.setSubmitting(false)
             if (isLastStep()) {
+              if (values.playerListOfTeam1.length < 2 || values.playerListOfTeam2.length < 2) {
+                alert("Looks like teams don't have enough players. Please add players to the team. And try again")
+                return
+              }
               setSubmitting(true)
 
               localStorage.setItem(`tournament_${tournament}_match_${matchid}`,

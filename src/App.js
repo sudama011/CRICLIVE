@@ -6,9 +6,10 @@ import { auth } from "./firebase";
 
 import { UserContext } from './context/userContext';
 import Navbar from './components/Home/Navbar';
+import Home from './components/Home/Home';
+import Footer from './components/Footer/Footer';
+import NotFound from './components/Match/NotFound';
 
-const Home = lazy(() => import('./components/Home/Home'));
-const Footer = lazy(() => import('./components/Home/Footer'));
 
 const Signup = lazy(() => import('./components/Signup'));
 const Login = lazy(() => import('./components/Login'));
@@ -23,7 +24,7 @@ const Team = lazy(() => import('./components/Team/Team'));
 const AddPlayer = lazy(() => import('./components/Team/AddPlayer'));
 
 const Container = lazy(() => import('./components/Match/Container'));
-
+const FooterMain = lazy(() => import('./components/Footer/FooterMain'));
 function App() {
 
   const { updateUser } = useContext(UserContext)
@@ -57,7 +58,8 @@ function App() {
           <Route exact path="/match/*" element={<ThemeProvider theme={theme}>
             <Suspense><Container /></Suspense>
           </ThemeProvider>} />
-
+          <Route exact path="/footer/*" element={<Suspense><FooterMain /></Suspense>} />
+          <Route path="/*" element={<NotFound />} />
         </Routes>
 
         <Suspense><Footer /></Suspense>
