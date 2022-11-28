@@ -47,22 +47,22 @@ export default function Footer() {
             <div className='text-center my-1'>
                 Follow Us On
                 <a href='https://www.facebook.com/sudama.dhakad.31'
-                    target="_blank" rel="noopener noreferrer">
+                    title='Facebook' target="_blank" rel="noopener noreferrer">
                     <MDBIcon icon="facebook" className="mx-2" />
                 </a>
 
                 <a href='https://twitter.com/sdhakad011'
-                    target="_blank" rel="noopener noreferrer">
+                    title='Twitter' target="_blank" rel="noopener noreferrer">
                     <MDBIcon icon="twitter" className="mx-2" />
                 </a>
 
                 <a href='https://www.instagram.com/sudama.dhakad/'
-                    target="_blank" rel="noopener noreferrer">
+                    title='Instagram' target="_blank" rel="noopener noreferrer">
                     <MDBIcon icon="instagram" className="mx-2" />
                 </a>
 
                 <a href='https://www.linkedin.com/in/sudama-dhakad-71a0a8201/'
-                    target="_blank" rel="noopener noreferrer">
+                    title='Linkedin' target="_blank" rel="noopener noreferrer">
                     <MDBIcon icon="linkedin" className="mx-2" />
                 </a>
             </div>
