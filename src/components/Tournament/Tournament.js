@@ -133,7 +133,7 @@ export default function Tournament() {
   }
 
   return (
-    <div>
+    <div className='text-center'>
       <h2>Point Table:</h2>
       <div style={{ overflowX: "scroll" }}>
         <table className="table table-info">

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { IconButton } from '@mui/material'
@@ -114,7 +113,7 @@ export default function ScoreBoard() {
           if (data.maxOver)
             setIsLocalStorageLoaded(true);
 
-          $('#end-inning').prop('disabled', true);
+          document.getElementById('end-inning').disabled = true
         }
       } catch (err) {
         console.error(err);
@@ -129,17 +128,19 @@ export default function ScoreBoard() {
   useEffect(() => {
 
     if (batter1.name !== undefined && batter1.name !== '') {
-      $("#batter1Name").val(batter1.name)
-      $("#batter1Name").prop('disabled', true)
+      const batter1NameElement = document.getElementById('batter1Name')
+      batter1NameElement.value = batter1.name
+      batter1NameElement.disabled = true
     }
-
     if (batter2.name !== undefined && batter2.name !== '') {
-      $("#batter2Name").val(batter2.name)
-      $("#batter2Name").prop('disabled', true)
+      const batter2NameElement = document.getElementById('batter2Name')
+      batter2NameElement.value = batter2.name
+      batter2NameElement.disabled = true
     }
     if (bowler.name !== undefined && bowler.name !== '') {
-      $("#bowlerName").val(bowler.name)
-      $("#bowlerName").prop('disabled', true)
+      const bowlerNameElement = document.getElementById('bowlerName')
+      bowlerNameElement.value = bowler.name
+      bowlerNameElement.disabled = true
     }
 
   }, [playerListOfTeam2]);

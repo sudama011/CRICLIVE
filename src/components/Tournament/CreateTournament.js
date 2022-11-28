@@ -92,7 +92,7 @@ function CreateTournament() {
         </div>
 
         <div className={Style.container}>
-          <label>Name</label>
+          <label>Prize</label>
           <input
             type="number"
             ref={prize}

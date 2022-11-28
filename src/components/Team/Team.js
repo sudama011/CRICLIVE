@@ -39,7 +39,7 @@ export default function Team() {
       setIsShown(current => ({ ...current, [index]: true }));
   };
   return (
-    <>
+    <div className='text-center'>
       <h3>Team Name : {team}</h3>
       <h5>Playing in tournament : {tournament}</h5>
 
@@ -69,6 +69,6 @@ export default function Team() {
         ))
         }
       </ul>
-    </>
+    </div>
   )
 }

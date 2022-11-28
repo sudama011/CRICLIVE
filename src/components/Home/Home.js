@@ -54,8 +54,8 @@ function Home() {
     }
 
     return (
-        <ul className='p-0'>
-            <li className="list-group-item list-group-item-success">
+        <ul className='p-0 text-center'>
+            <li className="list-group-item list-group-item-success p-0">
                 <h3>All Tournaments</h3>
                 <div style={{ overflowX: "scroll" }}>
                     <table className="table table-info">

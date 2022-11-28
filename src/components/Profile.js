@@ -60,8 +60,10 @@ export default function Profile() {
   }
 
   return (
-    <div>
-      <h2>Welcome - {user.name}</h2>
+    <div className='text-center'>
+      <div className='h3 text-justify text-center text-uppercase font-italic text-primary'>
+        Welcome - {user.name}
+      </div>
       <br />
       <form action="/createtournament" method="get">
         <button className="btn btn-secondary" type="submit">Create New Tournament</button>
