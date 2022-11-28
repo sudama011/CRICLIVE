@@ -1,66 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 import { MDBFooter, MDBContainer, MDBRow, MDBCol, MDBIcon } from 'mdb-react-ui-kit';
-import { FaFacebookSquare, FaLinkedin, FaInstagramSquare, FaTwitterSquare, FaHome, FaEnvelope, FaPhone } from "react-icons/fa";
 
 export default function Footer() {
     return (
         <MDBFooter bgColor='dark' className='text-center text-lg-start text-white-50'>
 
             <MDBContainer className='text-center text-md-start pt-2'>
-                <MDBRow className='mt-3'>
-                    <MDBCol md="3" lg="4" xl="4" className='mx-auto mb-2' color='#bfbfbf'>
+                <MDBRow className='mt-1'>
+                    <MDBCol md="3" lg="4" xl="4" className='mx-auto mb-0' color='#bfbfbf'>
                         <div className='h6 text-uppercase fw-bold mb-4'>
-                            <MDBIcon icon="gem" className="me-3" />
                             criclive
                         </div>
                         <p>
-                            <FaHome />
-                            MNIT, JAIPUR 302017,
+                            <MDBIcon fas icon="home" />
+                            MNIT, JAIPUR 302017
                         </p>
                         <p>
                             RAJASTHAN INDIA
                         </p>
                         <p>
-                            <FaEnvelope />
+                            <MDBIcon fas icon="envelope" />
                             criclive@gmail.com
                         </p>
                         <p>
-                            <FaPhone /> +91 9999999999
+                            <MDBIcon fas icon="phone" />
+                            +91 9999999999
                         </p>
 
                     </MDBCol>
 
-                    <MDBCol md="2" lg="2" xl="2" className='mx-auto mb-2'>
-                        <div className='h6 text-uppercase fw-bold mb-4'>Follow Us On</div>
-                        <p>
-                            <a href='https://www.facebook.com/sudama.dhakad.31'
-                                title='Facebook' target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                <FaFacebookSquare />facebook
-                            </a>
-                        </p>
-                        <p>
-                            <a href='https://twitter.com/sdhakad011'
-                                title='Twitter' target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                <FaTwitterSquare /> twitter
-                            </a>
-                        </p><p>
-                            <a href='https://www.instagram.com/sudama.dhakad/'
-                                title='Instagram' target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                <FaInstagramSquare /> instagram
-                            </a>
-                        </p>
-                        <p>
-                            <a href='https://www.linkedin.com/in/sudama-dhakad-71a0a8201/'
-                                title='Linkedin'
-                                target="_blank" rel="noopener noreferrer" className='me-4 text-white'>
-                                <FaLinkedin /> linkedin
-                            </a>
-                        </p>
-
-                    </MDBCol>
-
-                    <MDBCol md="3" lg="2" xl="2" className='mx-auto mb-2'>
+                    <MDBCol md="3" lg="2" xl="2" className='mx-auto mb-0'>
                         <div className='h6 text-uppercase fw-bold mb-4'>COMPANY</div>
 
                         <Link className='active nav-link me-4 text-white' to='/footer/faq' title='Frequently Asked Questions'>FAQ</Link>
@@ -74,7 +44,28 @@ export default function Footer() {
 
                 </MDBRow>
             </MDBContainer>
+            <div className='text-center my-1'>
+                Follow Us On
+                <a href='https://www.facebook.com/sudama.dhakad.31'
+                    target="_blank" rel="noopener noreferrer">
+                    <MDBIcon icon="facebook" className="mx-2" />
+                </a>
 
+                <a href='https://twitter.com/sdhakad011'
+                    target="_blank" rel="noopener noreferrer">
+                    <MDBIcon icon="twitter" className="mx-2" />
+                </a>
+
+                <a href='https://www.instagram.com/sudama.dhakad/'
+                    target="_blank" rel="noopener noreferrer">
+                    <MDBIcon icon="instagram" className="mx-2" />
+                </a>
+
+                <a href='https://www.linkedin.com/in/sudama-dhakad-71a0a8201/'
+                    target="_blank" rel="noopener noreferrer">
+                    <MDBIcon icon="linkedin" className="mx-2" />
+                </a>
+            </div>
             <div className='text-center p-2' style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}>
                 © 2022 criclive, All rights reserved
             </div>
