@@ -60,7 +60,7 @@ export default function Profile() {
   }
 
   return (
-    <div className='text-center'>
+    <div className='text-center overflow-auto'>
       <div className='h3 text-justify text-center text-uppercase font-italic text-primary'>
         Welcome - {user.name}
       </div>
@@ -70,33 +70,29 @@ export default function Profile() {
       </form>
       <br />
 
-      <ul className='p-0'>
-        <li className="list-group-item list-group-item-success p-0">
-          <h3>Your Tournaments</h3>
-          <div className="hide-x-scroll" style={{ overflowX: "scroll" }}>
-            <table className="table table-info">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Prize</th>
-                  <th>Village</th>
-                  <th>City</th>
-                  <th>State</th>
-                </tr>
-              </thead>
 
-              <tbody>
+      <h3>Your Tournaments</h3>
+      <table className="table table-info text-left">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Prize</th>
+            <th>Village</th>
+            <th>City</th>
+            <th>State</th>
+          </tr>
+        </thead>
 
-                {getBody(tournaments)}
+        <tbody>
 
-              </tbody>
+          {getBody(tournaments)}
 
-            </table>
-          </div>
-        </li>
-      </ul>
+        </tbody>
+
+      </table>
+
     </div >
   )
 }

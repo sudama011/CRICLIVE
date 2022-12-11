@@ -135,8 +135,8 @@ export default function Tournament() {
   return (
     <div className='text-center'>
       <h2>Point Table:</h2>
-      <div style={{ overflowX: "scroll" }}>
-        <table className="table table-info">
+      <div className='overflow-auto'>
+        <table className="table table-info text-left">
           <thead>
             <tr>
               <th>Name</th>
@@ -175,76 +175,75 @@ export default function Tournament() {
         </div>}
 
       <ul className="list-group">
-        <li className="list-group-item list-group-item-success">
+        <li className="list-group-item list-group-item-success p-0 overflow-auto">
           <h3>Present Matches :</h3>
-          <div style={{ overflowX: "scroll" }}>
-            <table className="table table-info">
-              <thead>
-                <tr>
-                  <th>Match id</th>
-                  <th>Team1</th>
-                  <th>Team2</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
 
-              <tbody>
+          <table className="table table-info text-left">
+            <thead>
+              <tr>
+                <th>Match id</th>
+                <th>Team1</th>
+                <th>Team2</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-                {getBody(presentMatch)}
+            <tbody>
 
-              </tbody>
+              {getBody(presentMatch)}
 
-            </table>
-          </div>
+            </tbody>
+
+          </table>
+
 
         </li>
-        <li className="list-group-item list-group-item-warning">
+        <li className="list-group-item list-group-item-warning p-0 overflow-auto">
           <h3>Future Matches :</h3>
-          <div style={{ overflowX: "scroll" }}>
-            <table className="table table-info">
-              <thead>
-                <tr>
-                  <th>Match id</th>
-                  <th>Team1</th>
-                  <th>Team2</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+          <table className="table table-info text-left">
+            <thead>
+              <tr>
+                <th>Match id</th>
+                <th>Team1</th>
+                <th>Team2</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-              <tbody>
+            <tbody>
 
-                {getBody(futureMatch)}
-              </tbody>
+              {getBody(futureMatch)}
+            </tbody>
 
-            </table>
-          </div>
+          </table>
+
         </li>
-        <li className="list-group-item list-group-item-dark">
+        <li className="list-group-item list-group-item-dark p-0 overflow-auto">
           <h3>Past Matches :</h3>
-          <div style={{ overflowX: "scroll" }}>
-            <table className="table table-info">
-              <thead>
-                <tr>
-                  <th>Match id</th>
-                  <th>Team1</th>
-                  <th>Team2</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
 
-              <tbody>
-                {getBody(pastMatch)}
+          <table className="table table-info text-left">
+            <thead>
+              <tr>
+                <th>Match id</th>
+                <th>Team1</th>
+                <th>Team2</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-              </tbody>
+            <tbody>
+              {getBody(pastMatch)}
 
-            </table>
-          </div>
+            </tbody>
+
+          </table>
+
         </li>
       </ul>
 

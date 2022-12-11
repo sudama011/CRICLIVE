@@ -55,30 +55,27 @@ function Home() {
 
     return (
         <ul className='p-0 text-center'>
-            <li className="list-group-item list-group-item-success p-0">
+            <li className="list-group-item list-group-item-success p-0 overflow-auto">
                 <h3>All Tournaments</h3>
-                <div style={{ overflowX: "scroll" }}>
-                    <table className="table table-info">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Organiser</th>
-                                <th>Prize</th>
-                                <th>Village</th>
-                                <th>City</th>
-                                <th>State</th>
-                            </tr>
-                        </thead>
+                <table className="table table-info text-left text-left">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Organiser</th>
+                            <th>Prize</th>
+                            <th>Village</th>
+                            <th>City</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
 
-                        <tbody>
-                            {getBody(presentTournament)}
-                        </tbody>
+                    <tbody>
+                        {getBody(presentTournament)}
+                    </tbody>
 
-                    </table>
-                </div>
-
+                </table>
             </li>
         </ul>
     )

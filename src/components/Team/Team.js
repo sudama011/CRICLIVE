@@ -54,7 +54,7 @@ export default function Team() {
         </>
       }
 
-      <ul className="list-group list-group-item-success">
+      <ul className="list-group list-group-item-success text-left">
         <h2>All Team players :</h2>
         {players.map((p, index) => (
           <li key={index} className="list-group-item list-group-item-success p-2">
