@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "../InputControl/InputForm.module.css";
 import Style from "../InputControl/InputControl.module.css";
 import { db } from '../../firebase';
@@ -7,7 +7,7 @@ import { doc, setDoc } from "firebase/firestore";
 
 export default function AddPlayer() {
   const { tournament, team } = useParams();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useState("");
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 
@@ -52,7 +52,7 @@ export default function AddPlayer() {
       await setDoc(doc(db, `tournaments/${tournament}/teams/${team}/players`, values.name), values);
 
       alert("Player Added Successfully");
-      // navigate(`/tournament/${tournament}/${team}`);
+      navigate(`/tournament/${tournament}/${team}`);
     } catch (err) {
       console.log(err)
       setSubmitButtonDisabled(false);

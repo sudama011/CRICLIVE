@@ -467,11 +467,11 @@ export default function ScoreBoard() {
       endInningButton.disabled = true;
 
       updatePointTable()
-      localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
-
+      
       setTimeout(() => {
+        localStorage.removeItem(`tournament_${tournament}_match_${matchid}`);
         navigate(`/tournament/${tournament}`);
-      }, 1000);
+      }, 2000);
       return
     }
 
