@@ -4,6 +4,15 @@ If you want to organise a cricket tournament than criclive is probably the best 
 Yes, this application is live and deployed in Firebase. You can check here [criclive](https://criclive-b357f.web.app/).
 <br>
 ## you can download this web app from install app/ add to home screen 
+# Screenshots
+## login page
+![Screenshot (55)](https://github.com/sudama011/CRICLIVE/assets/85701247/4461e4ff-2345-4227-ac9d-26387646ed4f)
+
+## profile page
+<img width="943" alt="image" src="https://github.com/sudama011/CRICLIVE/assets/85701247/b4bce16c-6a64-4f8c-af64-8d076d2d6399">
+
+## live score page
+<img width="955" alt="image" src="https://github.com/sudama011/CRICLIVE/assets/85701247/61bf6a48-aeef-4d76-b443-1801957d20d6">
 
 # Functionality
 1. Create a new tournament
